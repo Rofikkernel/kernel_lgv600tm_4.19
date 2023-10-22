@@ -1,0 +1,49 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
+ */
+
+#include "../kona-timelm_common/kona-timelm_common-misc.dtsi"
+
+&qupv3_se12_2uart {
+    status = "ok";
+};
+
+&soc {
+    gpio_keys {
+        compatible = "gpio-keys";
+        label = "gpio-keys";
+
+        pinctrl-names = "default";
+        pinctrl-0 = <&key_vol_up_default>;
+
+        vol_up {
+            label = "volume_up";
+            gpios = <&pm8150_gpios 6 GPIO_ACTIVE_LOW>;
+            linux,input-type = <1>;
+            linux,code = <KEY_VOLUMEUP>;
+            gpio-key,wakeup;
+            debounce-interval = <15>;
+            linux,can-disable;
+        };
+
+        hot1_key {
+            label = "hot1_key";
+            gpios = <&pm8150_gpios 1 GPIO_ACTIVE_LOW>;
+            linux,input-type = <1>;
+            linux,code = <377>;
+            gpio-key,wakeup;
+            debounce-interval = <15>;
+            linux,can-disable;
+        };
+    };
+
+    qcom,qbt_handler {
+        compatible = "qcom,qbt-handler";
+        qcom,ipc-gpio = <&tlmm 23 0>;
+        pinctrl-names = "default";
+        pinctrl-0 = <&key_home_default>;
+        qcom,finger-detect-gpio = <&pm8150_gpios 1 0>;
+    };
+};
+

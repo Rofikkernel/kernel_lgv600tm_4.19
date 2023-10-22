@@ -1,0 +1,242 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
+ */
+
+#include "dsi-panel-sw43410-mp-dsc-qhd-cmd.dtsi"
+#include "dsi-panel-sw43103-fhd-dsc-cmd.dtsi"
+#include "dsi-panel-sw43103-a3-fhd-dsc-cmd.dtsi"
+#include "dsi-panel-sw43103-pp2-fhd-dsc-cmd.dtsi"
+#include "dsi-panel-sw43103-dv-fhd-dsc-cmd.dtsi"
+#include "dsi-panel-sw43103-pv-fhd-dsc-cmd.dtsi"
+
+&soc {
+	dsi_panel_pwr_supply_sm8250: dsi_panel_pwr_supply_sm8250 {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		qcom,panel-supply-entry@0 {
+			reg = <0>;
+			qcom,supply-name = "vddi";
+			qcom,supply-min-voltage = <1800000>;
+			qcom,supply-max-voltage = <1800000>;
+			qcom,supply-enable-load = <62000>;
+			qcom,supply-disable-load = <80>;
+			qcom,supply-post-on-sleep = <20>;
+		};
+
+		qcom,panel-supply-entry@1 {
+			reg = <1>;
+			qcom,supply-name = "vpnl";
+			qcom,supply-min-voltage = <3000000>;
+			qcom,supply-max-voltage = <3000000>;
+			qcom,supply-enable-load = <857000>;
+			qcom,supply-disable-load = <0>;
+			qcom,supply-post-on-sleep = <0>;
+			qcom,supply-post-off-sleep = <10>;
+		};
+	};
+
+	gpio_keys {
+		compatible = "gpio-keys";
+		label = "gpio_keys";
+		status = "okay";
+		pinctrl_names = "default";
+		pinctrl-0 = <&ds3_smartcover_gpio_default &ds3_cover_display_back_gpio_default &luke_gpio_default>;
+		ds3_smart_cover {
+			label = "ds3_smart_cover";
+			gpios = <&tlmm 126 GPIO_ACTIVE_LOW>;
+			linux,input-type = <5>;
+			linux,code = <222>;
+			gpio-key,wakeup;
+			debounce-interval = <15>;
+			linux,can-disable;
+		};
+
+		ds3_cover_display_back {
+			label = "ds3_cover_display_back";
+			gpios = <&tlmm 134 GPIO_ACTIVE_LOW>;
+			linux,input-type = <5>;
+			linux,code = <222>;
+			gpio-key,wakeup;
+			debounce-interval = <15>;
+			linux,can-disable;
+		};
+
+		luke {
+			label = "luke";
+			gpios = <&tlmm 121 GPIO_ACTIVE_LOW>;
+			linux,input-type = <5>;
+			linux,code = <222>;
+			gpio-key,wakeup;
+			debounce-interval = <200>;
+		};
+	};
+};
+
+&sde_dsi{
+	qcom,dsi-ctrl = <&mdss_dsi0>;
+	qcom,dsi-phy = <&mdss_dsi_phy0>;
+
+	clocks = <&mdss_dsi0_pll BYTECLK_MUX_0_CLK>,
+			<&mdss_dsi0_pll PCLK_MUX_0_CLK>,
+			<&mdss_dsi0_pll BYTECLK_SRC_0_CLK>,
+			<&mdss_dsi0_pll PCLK_SRC_0_CLK>,
+			<&mdss_dsi0_pll SHADOW_BYTECLK_SRC_0_CLK>,
+			<&mdss_dsi0_pll SHADOW_PCLK_SRC_0_CLK>;
+	clock-names = "mux_byte_clk0", "mux_pixel_clk0",
+			"src_byte_clk0", "src_pixel_clk0",
+			"shadow_byte_clk0", "shadow_pixel_clk0";
+
+	vddi-supply = <&pm8150_l14>;
+	vpnl-supply = <&pm8150a_l11>;
+	qcom,dsi-default-panel = <&dsi_sw43103_a3_fhd_dsc_cmd>;
+};
+
+&dsi_sw43410_mp_dsc_qhd_cmd {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_sm8250>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,mdss-dsi-bl-min-level = <10>;
+	qcom,mdss-dsi-bl-max-level = <511>;
+	qcom,mdss-brightness-max-level = <511>;
+	qcom,platform-reset-gpio = <&tlmm 75 0>;
+	lge,dcs-brightness-bigendian;
+	lge,default-brightness = <158>;
+	lge,man-name = "LGD";
+	lge,ddic-name = "sw43410";
+};
+
+&dsi_sw43103_fhd_dsc_cmd {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_sm8250>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,mdss-dsi-bl-min-level = <5>;
+	qcom,mdss-dsi-bl-max-level = <2047>;
+	qcom,mdss-brightness-max-level = <365>;
+	qcom,platform-reset-gpio = <&tlmm 75 0>;
+	//qcom,platform-te-gpio = <&tlmm 66 0>;
+	//qcom,esd-check-enabled;
+	//qcom,mdss-dsi-panel-status-check-mode = "te_signal_check";
+	lge,dcs-brightness-bigendian;
+	lge,default-brightness = <158>;
+	lge,man-name = "BOE";
+	lge,ddic-name = "sw43103";
+	lge,panel-pins = <&pm8150l_gpios 4 0>;
+	lge,panel-on-pin-seq = <0 1 0>;
+	lge,panel-off-pin-seq = <0 0 0>;
+	lge,use-labibb;
+};
+
+&dsi_sw43103_a3_fhd_dsc_cmd {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_sm8250>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,mdss-dsi-bl-min-level = <5>;
+	qcom,mdss-dsi-bl-max-level = <2047>;
+	qcom,mdss-brightness-max-level = <365>;
+	qcom,platform-reset-gpio = <&tlmm 75 0>;
+	qcom,platform-te-gpio = <&tlmm 66 0>;
+	qcom,esd-check-enabled;
+	qcom,mdss-dsi-panel-status-check-mode = "te_signal_check";
+	lge,dcs-brightness-bigendian;
+	lge,default-brightness = <158>;
+	lge,man-name = "BOE";
+	lge,ddic-name = "sw43103";
+	lge,panel-pins = <&pm8150l_gpios 4 0>;
+	lge,panel-on-pin-seq = <0 1 0>;
+	lge,panel-off-pin-seq = <0 0 0>;
+	lge,use-labibb;
+};
+
+&dsi_sw43103_pp2_fhd_dsc_cmd {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_sm8250>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,mdss-dsi-bl-min-level = <5>;
+	qcom,mdss-dsi-bl-max-level = <2047>;
+	qcom,mdss-brightness-max-level = <365>;
+	qcom,platform-reset-gpio = <&tlmm 75 0>;
+	qcom,platform-te-gpio = <&tlmm 66 0>;
+	qcom,esd-check-enabled;
+	qcom,mdss-dsi-panel-status-check-mode = "te_signal_check";
+	lge,dcs-brightness-bigendian;
+	lge,default-brightness = <158>;
+	lge,man-name = "BOE";
+	lge,ddic-name = "sw43103";
+	lge,panel-pins = <&pm8150l_gpios 4 0>;
+	lge,panel-on-pin-seq = <0 1 0>;
+	lge,panel-off-pin-seq = <0 0 0>;
+	lge,use-labibb;
+};
+
+&dsi_sw43103_dv_fhd_dsc_cmd {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_sm8250>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,mdss-dsi-bl-min-level = <5>;
+	qcom,mdss-dsi-bl-max-level = <2047>;
+	qcom,mdss-brightness-max-level = <365>;
+	qcom,platform-reset-gpio = <&tlmm 75 0>;
+	qcom,platform-te-gpio = <&tlmm 66 0>;
+	qcom,esd-check-enabled;
+	qcom,mdss-dsi-panel-status-check-mode = "te_signal_check";
+	lge,dcs-brightness-bigendian;
+	lge,default-brightness = <158>;
+	lge,man-name = "BOE";
+	lge,ddic-name = "sw43103";
+	lge,panel-pins = <&pm8150l_gpios 4 0>;
+	lge,panel-on-pin-seq = <0 1 0>;
+	lge,panel-off-pin-seq = <0 0 0>;
+	lge,use-labibb;
+};
+
+&dsi_sw43103_pv_fhd_dsc_cmd {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_sm8250>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,mdss-dsi-bl-min-level = <5>;
+	qcom,mdss-dsi-bl-max-level = <2047>;
+	qcom,mdss-brightness-max-level = <365>;
+	qcom,platform-reset-gpio = <&tlmm 75 0>;
+	qcom,platform-te-gpio = <&tlmm 66 0>;
+	qcom,esd-check-enabled;
+	qcom,mdss-dsi-panel-status-check-mode = "te_signal_check";
+	lge,dcs-brightness-bigendian;
+	lge,default-brightness = <158>;
+	lge,man-name = "BOE";
+	lge,ddic-name = "sw43103";
+	lge,panel-pins = <&pm8150l_gpios 4 0>;
+	lge,panel-on-pin-seq = <0 1 0>;
+	lge,panel-off-pin-seq = <0 0 0>;
+	lge,use-labibb;
+};
+
+&dsi_sim_cmd {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_sm8250>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,platform-reset-gpio = <&tlmm 75 0>;
+	lge,man-name = "QCT";
+	lge,ddic-name = "dsi_sim_cmd";
+};
+
+&sde_dp {
+	qcom,dp-usbpd-detection = <&pm8150b_pdphy>;
+	qcom,ext-disp = <&ext_disp>;
+	lge,dp-use;
+	pinctrl-names = "mdss_dp_active", "mdss_dp_sleep", "default";
+	pinctrl-0 = <&sde_dp_aux_active &sde_dp_usbplug_cc_active>;
+	pinctrl-1 = <&sde_dp_aux_suspend &sde_dp_usbplug_cc_suspend>;
+	qcom,aux-cfg1-settings = [24 23 13 1d];
+	qcom,aux-en-gpio = <&tlmm 73 0>;
+	qcom,aux-sel-gpio = <&tlmm 74 0>;
+	qcom,usbplug-cc-gpio = <&tlmm 65 0>;
+};
+
+&mdss_mdp {
+	connectors = <&sde_dp &sde_wb &sde_dsi &sde_rscc>;
+};
+
+&pm8150a_l11 {
+	regulator-min-microvolt = <3000000>;
+	regulator-max-microvolt = <3000000>;
+	qcom,init-voltage = <3000000>;
+};
+
+&display_panel_avdd {
+    status = "disabled";
+};

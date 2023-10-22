@@ -1,0 +1,13 @@
+#ifndef __LGE_POWER_DTS_SYMBOL_H
+#define __LGE_POWER_DTS_SYMBOL_H
+
+#define SMB1390_PL_INPUT_NONE               0
+#define SMB1390_PL_INPUT_USBIN_USBIN        1
+#define SMB1390_PL_INPUT_USBIN_USBIN_EXT    2
+#define SMB1390_PL_INPUT_USBMID_USBMID      3
+
+#define SMB1390_PL_OUTPUT_NONE    0
+#define SMB1390_PL_OUTPUT_VPH     1
+#define SMB1390_PL_OUTPUT_VBAT    2
+
+#endif

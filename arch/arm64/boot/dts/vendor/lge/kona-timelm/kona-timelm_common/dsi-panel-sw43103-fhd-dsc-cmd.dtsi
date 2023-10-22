@@ -1,0 +1,306 @@
+/* Copyright (c) 2014, Code Aurora Forum. All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 and
+ * only version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
+&mdss_mdp {
+    dsi_sw43103_fhd_dsc_cmd: qcom,mdss_dsi_sw43103_fhd_dsc_cmd {
+    qcom,mdss-dsi-panel-name = "SW43103 cmd mode dsc dsi panel";
+		qcom,mdss-dsi-panel-type = "dsi_cmd_mode";
+		qcom,mdss-dsi-virtual-channel-id = <0>;
+		qcom,mdss-dsi-stream = <0>;
+		qcom,mdss-dsi-t-clk-post = <0x14>;
+		qcom,mdss-dsi-t-clk-pre = <0x10>;
+		qcom,mdss-dsi-bpp = <24>;
+		qcom,mdss-dsi-color-order = "rgb_swap_rgb";
+		qcom,mdss-dsi-underflow-color = <0xff>;
+		qcom,mdss-dsi-border-color = <0>;
+		qcom,dsi-ctrl-num = <0>;
+		qcom,dsi-phy-num = <0>;
+		qcom,dsi-select-clocks = "mux_byte_clk0", "mux_pixel_clk0",
+					"src_byte_clk0", "src_pixel_clk0",
+					"shadow_byte_clk0", "shadow_pixel_clk0";
+		qcom,mdss-dsi-traffic-mode = "burst_mode";
+		qcom,mdss-dsi-lane-map = "lane_map_0123";
+		qcom,mdss-dsi-bllp-eof-power-mode;
+		qcom,mdss-dsi-bllp-power-mode;
+		qcom,mdss-dsi-lane-0-state;
+		qcom,mdss-dsi-lane-1-state;
+		qcom,mdss-dsi-lane-2-state;
+		qcom,mdss-dsi-lane-3-state;
+		qcom,mdss-dsi-reset-sequence = <1 10>, <0 2>, <1 10>;
+		qcom,mdss-dsi-dma-trigger = "trigger_sw";
+		qcom,mdss-dsi-mdp-trigger = "none";
+		qcom,mdss-dsi-te-pin-select = <1>;
+		qcom,mdss-dsi-wr-mem-start = <0x2c>;
+		qcom,mdss-dsi-wr-mem-continue = <0x3c>;
+		qcom,mdss-dsi-te-dcs-command = <1>;
+		//qcom,mdss-dsi-te-check-enable;
+		//qcom,mdss-dsi-te-using-te-pin;
+		//qcom,mdss-dsi-lp11-init;
+		qcom,mdss-dsi-tx-eot-append;
+		qcom,ulps-enabled;
+		qcom,suspend-ulps-enabled;
+		qcom,null-insertion-enabled;
+
+		qcom,mdss-dsi-panel-hdr-enabled;
+		qcom,mdss-dsi-panel-hdr-color-primaries = <14880 15935 32435 16555 14945 30910 7790 3415>;
+		qcom,mdss-dsi-panel-peak-brightness = <5000000>;		/* max. 500nits */
+		qcom,mdss-dsi-panel-blackness-level = <6134>;
+
+		qcom,mdss-pan-physical-width-dimension = <69>;
+		qcom,mdss-pan-physical-height-dimension = <158>;
+
+		//lge,use-dim-ctrl;
+		/* Brightness Map List */
+		lge,blmap = <
+			0
+			5 5 5 5 5 5 5 5 5 5 6 8 9 10 11 13 14 15 16 18
+			19 20 22 23 24 25 27 28 29 30 32 33 34 35 37 38 43 48 52 57
+			62 67 71 76 81 86 90 95 100 105 109 114 119 124 128 133 138 143 147 152
+			157 163 168 174 180 185 191 197 202 208 214 219 225 231 236 242 248 253 259 265
+			270 273 277 280 293 296 299 302 305 308 312 315 318 321 324 327 330 333 336 339
+			342 345 349 352 355 358 361 364 368 371 375 378 382 386 389 393 397 400 404 407
+			411 415 418 422 425 429 433 436 440 444 447 451 454 458 467 475 484 492 501 509
+			518 522 530 539 547 556 564 573 581 590 599 607 616 624 633 641 650 658 672 680
+			687 695 703 711 718 726 734 741 749 757 765 772 780 788 795 803 811 818 826 834
+			842 849 857 862 866 871 875 880 884 889 893 898 902 907 912 916 921 925 930 934
+			939 943 948 952 957 961 966 971 976 981 986 991 996 1001 1006 1011 1016 1021 1026 1032
+			1037 1042 1047 1052 1057 1062 1067 1072 1077 1082 1087 1092 1122 1152 1182 1212 1242 1271 1301 1331
+			1361 1391 1421 1451 1481 1511 1541 1571 1601 1630 1660 1690 1720 1750 1780 1782 1783 1785 1786 1788
+			1789 1791 1792 1794 1795 1797 1798 1800 1801 1803 1804 1806 1807 1809 1810 1812 1815 1817 1819 1822
+			1824 1826 1829 1831 1833 1836 1838 1840 1843 1845 1848 1850 1853 1856 1858 1861 1864 1866 1869 1872
+			1874 1877 1880 1882 1885 1888 1890 1893 1896 1898 1901 1904 1906 1909 1912 1914 1917 1920 1922 1925
+			1928 1930 1933 1936 1938 1941 1944 1946 1949 1952 1954 1957 1960 1962 1965 1968 1970 1973 1976 1978
+			1981 1984 1986 1989 1992 1994 1997 2000 2002 2005 2008 2011 2013 2016 2019 2022 2025 2027 2030 2033
+			2036 2039 2041 2044 2047
+		>;
+		lge,blmap-ve = <
+			0
+			5 5 5 5 5 5 5 5 5 5 6 8 9 10 11 13 14 15 16 18
+			19 20 22 23 24 25 27 28 29 30 32 33 34 35 37 38 43 48 52 57
+			62 67 71 76 81 86 90 95 100 105 109 114 119 124 128 133 138 143 147 152
+			157 163 168 174 180 185 191 197 202 208 214 219 225 231 236 242 248 253 259 265
+			270 273 277 280 293 296 299 302 305 308 312 315 318 321 324 327 330 333 336 339
+			342 345 349 352 355 358 361 364 368 371 375 378 382 386 389 393 397 400 404 407
+			411 415 418 422 425 429 433 436 440 444 447 451 454 458 467 475 484 492 501 509
+			518 522 530 539 547 556 564 573 581 590 599 607 616 624 633 641 650 658 672 680
+			687 695 703 711 718 726 734 741 749 757 765 772 780 788 795 803 811 818 826 834
+			842 849 857 862 866 871 875 880 884 889 893 898 902 907 912 916 921 925 930 934
+			939 943 948 952 957 961 966 971 976 981 986 991 996 1001 1006 1011 1016 1021 1026 1032
+			1037 1042 1047 1052 1057 1062 1067 1072 1077 1082 1087 1092 1122 1152 1182 1212 1242 1271 1301 1331
+			1361 1391 1421 1451 1481 1511 1541 1571 1601 1630 1660 1690 1720 1750 1780 1782 1783 1785 1786 1788
+			1789 1791 1792 1794 1795 1797 1798 1800 1801 1803 1804 1806 1807 1809 1810 1812 1815 1817 1819 1822
+			1824 1826 1829 1831 1833 1836 1838 1840 1843 1845 1848 1850 1853 1856 1858 1861 1864 1866 1869 1872
+			1874 1877 1880 1882 1885 1888 1890 1893 1896 1898 1901 1904 1906 1909 1912 1914 1917 1920 1922 1925
+			1928 1930 1933 1936 1938 1941 1944 1946 1949 1952 1954 1957 1960 1962 1965 1968 1970 1973 1976 1978
+			1981 1984 1986 1989 1992 1994 1997 2000 2002 2005 2008 2011 2013 2016 2019 2022 2025 2027 2030 2033
+			2036 2039 2041 2044 2047
+		>;
+		lge,blmap-ex = <
+			0
+			10 10 10 10 10 10 10 10 127 129 131 133 135 137 139 142 144 146 148 150
+			152 154 156 158 160 162 164 166 168 171 173 175 177 179 181 183 189 194 200 205
+			211 216 222 227 233 238 244 249 255 261 266 272 277 283 288 294 299 305 310 316
+			321 327 333 338 344 349 355 360 366 371 377 382 388 393 399 407 415 423 431 439
+			447 455 463 471 479 487 495 503 511 519 527 535 543 551 559 567 575 581 587 594
+			600 606 612 619 625 631 637 643 650 656 662 668 675 681 687 695 704 712 721 729
+			738 746 754 763 771 780 788 796 805 813 822 830 839 847 847 847 847 847 847 847
+			856 866 875 884 893 903 912 921 930 940 949 958 967 977 986 995 1004 1014 1023 1023
+			1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023
+			1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023
+			1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023
+			1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023
+			1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023 1023
+		>;
+		lge,blmap-hdr = <
+			0
+			5 5 5 5 5 5 5 5 5 5 6 8 9 10 11 13 14 15 16 18
+			19 20 22 23 24 25 27 28 29 30 32 33 34 35 37 38 43 48 52 57
+			62 67 71 76 81 86 90 95 100 105 109 114 119 124 128 133 138 143 147 152
+			157 163 168 174 180 185 191 197 202 208 214 219 225 231 236 242 248 253 259 265
+			270 273 277 280 293 296 299 302 305 308 312 315 318 321 324 327 330 333 336 339
+			342 345 349 352 355 358 361 364 368 371 375 378 382 386 389 393 397 400 404 407
+			411 415 418 422 425 429 433 436 440 444 447 451 454 458 467 475 484 492 501 509
+			518 522 530 539 547 556 564 573 581 590 599 607 616 624 633 641 650 658 672 680
+			687 695 703 711 718 726 734 741 749 757 765 772 780 788 795 803 811 818 826 834
+			842 849 857 862 866 871 875 880 884 889 893 898 902 907 912 916 921 925 930 934
+			939 943 948 952 957 961 966 971 976 981 986 991 996 1001 1006 1011 1016 1021 1026 1032
+			1037 1042 1047 1052 1057 1062 1067 1072 1077 1082 1087 1092 1122 1152 1182 1212 1242 1271 1301 1331
+			1361 1391 1421 1451 1481 1511 1541 1571 1601 1630 1660 1690 1720 1750 1780 1782 1783 1785 1786 1788
+			1789 1791 1792 1794 1795 1797 1798 1800 1801 1803 1804 1806 1807 1809 1810 1812 1815 1817 1819 1822
+			1824 1826 1829 1831 1833 1836 1838 1840 1843 1845 1848 1850 1853 1856 1858 1861 1864 1866 1869 1872
+			1874 1877 1880 1882 1885 1888 1890 1893 1896 1898 1901 1904 1906 1909 1912 1914 1917 1920 1922 1925
+			1928 1930 1933 1936 1938 1941 1944 1946 1949 1952 1954 1957 1960 1962 1965 1968 1970 1973 1976 1978
+			1981 1984 1986 1989 1992 1994 1997 2000 2002 2005 2008 2011 2013 2016 2019 2022 2025 2027 2030 2033
+			2036 2039 2041 2044 2047
+		>;
+
+		lge,mdss-dsi-nolp-command = [
+			05 01 00 00 00 00 01 28
+			05 01 00 00 78 00 01 13
+			05 01 00 00 00 00 01 29
+		];
+		lge,mdss-dsi-nolp-command-state = "dsi_lp_mode";
+		lge,mdss-dsi-lp2-command = [
+			05 01 00 00 00 00 01 28
+			05 01 00 00 78 00 01 12
+			05 01 00 00 00 00 01 29
+		];
+		lge,mdss-dsi-lp2-command-state = "dsi_lp_mode";
+
+		lge,use-color-manager;
+		lge,color-manager-default-status = <1>;
+		lge,mdss-dsi-color-manager-mode-table = <0 1>, <1 1>, <2 1>, <3 1>;
+		/* Video Enahnacement */
+		lge,mdss-dsi-ve-on-command = [
+		];
+		lge,mdss-dsi-ve-on-command-state = "dsi_lp_mode";
+
+		lge,mdss-dsi-ve-off-command = [
+		];
+		lge,mdss-dsi-ve-off-command-state = "dsi_lp_mode";
+
+		/* FP LHBM */
+		lge,use-fp-lhbm;
+		lge,mdss-dsi-fp-lhbm-command = [
+			39 01 00 00 00 00 02 B0 A3
+			39 01 00 00 00 00 04 EE 02 00 00
+			39 01 00 00 00 00 02 B0 A5
+			39 01 00 00 00 00 0C CD 10 12 01 5A 90 00 00 00 00 00 5D//Green Circle
+			39 01 00 00 00 00 02 B0 A1
+			39 01 00 00 00 00 0B 55 08 08 82 A8 1C 61 0A 90 04 00//FPS On
+			39 01 00 00 00 00 03 51 07 FF
+			/*
+			mipi.write 0x39 0xCD 0x00 //FP_SHAPE 0: Rectangle
+			mipi.write 0x39 0xCD 0x10 //FP_SHAPE 1: circle
+			mipi.write 0x39 0xCD 0x10 0x17 //White
+			mipi.write 0x39 0xCD 0x00 0x14 //Red
+			mipi.write 0x39 0xCD 0x00 0x12 //Green
+			mipi.write 0x39 0xCD 0x00 0x11 //Blue
+			mipi.write 0x39 0xCD 0x00 0x00 //Black
+			*/
+		];
+		lge,mdss-dsi-fp-lhbm-command-state = "dsi_hs_mode";
+
+		lge,mdss-dsi-fp-lhbm-exit-command = [
+			39 01 00 00 00 00 02 B0 A1
+			39 01 00 00 00 00 0B 55 08 00 //FPS Off
+			39 01 00 00 00 00 03 51 06 F4
+		];
+		lge,mdss-dsi-fp-lhbm-exit-command-state = "dsi_hs_mode";
+
+		qcom,mdss-dsi-display-timings {
+			timing@0{
+				qcom,mdss-dsi-panel-phy-timings = [00 11 04 04 1E 1E 04 04 02 02 04 00 10 14];
+				qcom,mdss-dsi-panel-clockrate = <435355200>;
+				qcom,display-topology = <1 1 1>;
+				qcom,default-topology-index = <0>;
+				qcom,mdss-dsi-panel-framerate = <60>;
+				qcom,mdss-dsi-panel-width = <1080>;
+				qcom,mdss-dsi-panel-height = <2460>;
+				qcom,mdss-dsi-h-front-porch = <50>;
+				qcom,mdss-dsi-h-back-porch = <50>;
+				qcom,mdss-dsi-h-pulse-width = <30>;
+				qcom,mdss-dsi-h-sync-skew = <0>;
+				qcom,mdss-dsi-v-back-porch = <2>;
+				qcom,mdss-dsi-v-front-porch = <4>;
+				qcom,mdss-dsi-v-pulse-width = <2>;
+				qcom,mdss-dsi-h-left-border = <0>;
+				qcom,mdss-dsi-h-right-border = <0>;
+				qcom,mdss-dsi-v-top-border = <0>;
+				qcom,mdss-dsi-v-bottom-border = <0>;
+				qcom,mdss-dsi-h-sync-pulse = <0>;
+				//qcom,mdss-mdp-transfer-time-us = <15000>;
+
+				qcom,mdss-dsi-on-command = [
+					15 01 00 00 00 00 02 B0 A1
+					15 01 00 00 00 00 02 53 00
+					15 01 00 00 00 00 02 55 08
+					15 01 00 00 00 00 02 3D 00
+					15 01 00 00 00 00 02 35 00
+					39 01 00 00 00 00 05 2A 00 00 04 37
+					39 01 00 00 00 00 05 2B 00 00 09 9B
+					39 01 00 00 00 00 05 30 00 00 09 9B
+					39 01 00 00 00 00 05 31 00 00 04 37
+
+					//IP Setting
+					15 01 00 00 00 00 02 B0 A6 //level6 TOP_CTRL
+					15 01 00 00 00 00 02 F7 AC //OTP auto load off afet Sleep out
+					15 01 00 00 00 00 02 B0 A1 //level1TOP_CTRL
+					15 01 00 00 00 00 02 B0 CA //Manufacturer Command Protect
+					05 01 00 00 78 00 01 11    //Sleep Out
+
+					15 01 00 00 00 00 02 B0 A1 //level1TOP_CTRL
+					15 01 00 00 00 00 02 53 00 //Digital Gamma & Sharpness & BC Dimming & Contrast & CM Mode0 OFF
+
+					15 01 00 00 00 00 02 B0 A1
+					39 01 00 00 00 00 03 55 08 00 //HDR Mode1 & HBM Mode2 & ACL set1 & ICC set1 & FPS OFF
+
+					/* TODO : Check SW43103 A2 panel.
+					15 01 00 00 00 00 02 B0 A1
+					15 01 00 00 00 00 02 3D 08 //DEMURA Enable
+					*/
+					15 01 00 00 00 00 02 B0 A4
+					15 01 00 00 00 00 02 B1 05
+					15 01 00 00 00 00 02 B0 A1 //PPA & EPP & Sharpening ON
+
+
+					15 01 00 00 00 00 02 B0 A5
+					15 01 00 00 00 00 02 C0 00
+					15 01 00 00 00 00 02 B0 A1 //Corner & Notch OFF
+
+					15 01 00 00 00 00 02 B0 A5
+					39 01 00 00 00 00 03 D2 F1 50
+					15 01 00 00 78 00 02 B0 A1 //Data Remapping (ON)
+
+					/* For only Bringup A2 D-IC
+					00 00 00 00 12 C1 88 48 60 0F 51 50 50 34 4F 5A 33 06 54 54 11 11 02
+					39 01 00 00 00 00 1F C3 1B 23 26 26 26 26 26 26 26 26 1B 23 26 26 26 26 26 26 26 26 1B 23 26 26 26 26 26 26 26 26
+					*/
+
+					05 01 00 00 78 00 01 29 //Display On
+					];
+
+				qcom,mdss-dsi-post-panel-on-command = [
+					//05 01 00 00 78 00 01 12
+					//39 01 00 00 00 00 03 51 07 FF
+				];
+
+				qcom,mdss-dsi-off-command = [
+					05 01 00 00 78 00 01 28
+					05 01 00 00 96 00 01 10
+				];
+
+				qcom,compression-mode = "dsc";
+				qcom,mdss-dsc-version = <0x11>;
+				qcom,mdss-dsc-scr-version = <0x1>;
+				qcom,mdss-dsc-slice-height = <60>;
+				qcom,mdss-dsc-slice-width = <540>;
+				qcom,mdss-dsc-slice-per-pkt = <2>;
+				qcom,mdss-dsc-bit-per-component = <8>;
+				qcom,mdss-dsc-bit-per-pixel = <8>;
+				qcom,lm-split = <540 540>;
+				qcom,mdss-dsc-encoders = <2>;
+				qcom,mdss-dsc-block-prediction-enable;
+
+				qcom,mdss-dsi-on-command-state = "dsi_lp_mode";
+				qcom,mdss-dsi-off-command-state = "dsi_lp_mode";
+
+				qcom,mode-control-dsi-state = "dsi_lp_mode";
+				qcom,mdss-dsi-pps-command-state = "dsi_lp_mode";
+			};
+		};
+	};
+};
+
+&mdss_dsi1 {
+	status = "disabled";
+};

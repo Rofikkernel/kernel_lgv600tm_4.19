@@ -1,0 +1,15 @@
+config LFS_MMC
+	bool
+	default y if LFS_COMMON
+
+config LFS_MMC_CLK_SCALE_DISABLE
+	bool
+	default y if LFS_COMMON
+
+config LFS_MMC_TRAY_EVENT
+	bool
+	default y if LFS_COMMON
+
+config LFS_MMC_SD_WAKE_ENABLE
+	bool
+	default y if LFS_COMMON

@@ -1,0 +1,47 @@
+/*
+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 and
+ * only version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+&qupv3_se15_i2c { /* QUPV3 SE4  */
+	status = "ok";
+
+	dw7800_vibrator: dw7800@59 {
+		compatible = "dongwoon,dw7800";
+		status = "ok";
+		reg = <0x59>;
+		dongwoon,vpwr-on = <0>;
+	};
+};	
+
+&soc {
+	regulator-haptics-boost {
+		status = "disabled";
+		compatible = "regulator-fixed";
+		regulator-name = "vdd_hap_boost";
+		gpio = <&pm8150b_gpios 5 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&haptics_boost_default>;
+		startup-delay-us = <1000>;
+		enable-active-high;
+	};
+};
+
+/* disable qcom haptic */
+&spmi_bus {
+	qcom,pm8150b@3 {
+		haptics: qcom,haptics@c000 {
+			status = "disabled";
+			qcom,actuator-type = "erm";
+			qcom,vmax-mv = <3016>;
+			vdd-supply = <&vreg_hap_boost>;
+		};
+	};
+};

@@ -1,0 +1,32 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
+ */
+
+#include "../kona-timelm_common/kona-timelm_common-nfc.dtsi"
+
+&qupv3_se1_i2c {
+        status = "ok";
+        qcom,clk-freq-out = <400000>;
+        nq@28 {
+                status = "disabled";
+        };
+
+        cxd22xx-i2c@28 {
+                compatible = "sony,cxd22xx-i2c";
+                reg = <0x28>;
+                status = "ok";
+                sony,gpio_sda = <&tlmm 4 0x00>;
+                sony,gpio_scl = <&tlmm 5 0x00>;
+                sony,gpio_irq = <&tlmm 111 0x00>;
+                sony,gpio_hvdd = <&tlmm 14 0x00>;
+                sony,gpio_xrst = <&tlmm 110 0x00>;
+                sony,gpio_mode = <&tlmm 6 0x00>;
+                sony,gpio_tst1 = <&tlmm 30 0x00>;
+                sony,i2c-pull-up = <1>;
+                qcom,clk-src = "BBCLK2";
+                interrupt-parent = <&tlmm>;
+                interrupts = <111 0>;
+                interrupt-names = "nfc_irq";
+        };
+};

@@ -1,0 +1,124 @@
+/*
+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 and
+ * only version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
+&pm8150l_gpios {
+	fm_vdd_en {
+		fm_vdd_en_default: fm_vdd_en_default {
+			pins = "gpio6";
+			function = "normal";
+			output-enable;
+			input-disable;
+			bias-disable;
+			qcom,drive-strength = <3>; /* high */
+			power-source = <1>; /* 1.8 V */
+		};
+	};
+};
+
+&tlmm {
+		pmx_fm_int {
+			fm_int_default: fm_int_default {
+				mux {
+					pins = "gpio51";
+					function = "gpio";
+				};
+
+				config {
+					pins = "gpio51";
+					drive-strength = <2>;
+					bias-pull-up;
+				};
+			};
+			fm_int_active: fm_int_active {
+				mux {
+					pins = "gpio51";
+					function = "gpio";
+				};
+
+				config {
+					pins = "gpio51";
+					drive-strength = <16>;
+					bias-pull-up;
+				};
+			};
+
+		fm_int_suspend: fm_int_suspend {
+				mux {
+					pins = "gpio51";
+					function = "gpio";
+				};
+
+				config {
+					pins = "gpio51";
+					drive-strength = <2>;
+					bias-pull-up;
+				};
+			};
+		};
+	pmx_fm_lna {
+		fm_lna_active: fm_lna_active {
+				   mux {
+					   pins = "gpio174";
+					   function = "gpio";
+				   };
+				   config {
+					   pins = "gpio174";
+					   drive-strength = <2>;
+					   output-low;
+					   bias-disable;
+				   };
+			   };
+
+		fm_lna_suspend: fm_lna_suspend {
+					mux {
+						pins = "gpio174";
+						function = "gpio";
+					};
+					config {
+						pins = "gpio174";
+						drive-strength = <2>;
+						bias-pull-down;
+					};
+				};
+		};
+};
+
+&qupv3_se15_i2c {
+	status = "okay";
+	nq@64 {
+		compatible = "rtc6226";
+		status = "okay";
+		reg = <0x64>;
+		pinctrl-names = "default","pmx_fm_active","pmx_fm_suspend";
+		pinctrl-0 = <&fm_int_default>,<&fm_lna_suspend>;
+		pinctrl-1 = <&fm_int_active>,<&fm_lna_active>;
+		pinctrl-2 = <&fm_int_suspend>,<&fm_lna_suspend>;
+		fmint-gpio = <&tlmm 51 0>;
+		rtc,ext-ldo = <&pm8150l_gpios 6 0>;
+		rtc,fm-sw-gpio = <&tlmm 173 0>;
+		rtc,lna-en-gpio = <&tlmm 174 0>;
+		interrupts = <0 1>;
+		#interrupt-cells = <1>;
+		interrupt-map-mask = <0xffffffff>;
+		interrupt-map = <
+			0 &tlmm 51 2
+			>;
+		interrupt-names = "rtc_fm_int";
+		vdd-supply = <&pm8150a_bob>;
+		rtc6226,vdd-supply-voltage = <3312000 3312000>;
+		vio-supply = <&pm8150_s4>;
+		rtc6226,vio-supply-voltage = <1800000 1800000 >;
+
+	};
+};
+

@@ -1,0 +1,89 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
+ */
+
+&soc{
+
+	fingerprint@0 {
+		compatible = "egistec,et713";
+		egistec,gpio_irq = <&tlmm 23 0x00>;
+		egistec,gpio_rst = <&tlmm 10 0x00>;
+		vcc_spi-supply = <&fingerprint_sensor_vdd>;
+		pinctrl-names = "et713_reset_reset",
+			"et713_reset_active",
+			"et713_irq_active";
+		pinctrl-0 = <&et713_reset_reset>;
+		pinctrl-1 = <&et713_reset_active>;
+		pinctrl-2 = <&et713_irq_active>;
+		status = "ok";
+	};
+
+	fingerprint_sensor_vdd: gpio-regulator@f {
+		compatible = "regulator-fixed";
+		reg = <0x0f 0x00>;
+		regulator-name = "fingerprint_sensor_vdd";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-enable-ramp-delay = <135>; // TBD
+		enable-active-high;
+		gpio = <&tlmm 26 0x00>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&fingerprint_sensor_ldo_gpio>;
+		vin-supply = <&pm8150a_bob>;
+	};
+};
+
+&tlmm {
+	et713_reset_reset: et713_reset_reset {
+		mux {
+			pins = "gpio10";
+			function = "gpio";
+		};
+		config {
+			pins = "gpio10";
+			drive-strength = <2>;
+			bias-disable;
+			output-low;
+		};
+	};
+
+	et713_reset_active: et713_reset_active {
+		mux {
+			pins = "gpio10";
+			function = "gpio";
+		};
+		config {
+			pins = "gpio10";
+			drive-strength = <2>;
+			bias-disable;
+			output-high;
+		};
+	};
+
+	et713_irq_active: et713_irq_active {
+		mux {
+			pins = "gpio23";
+			function = "gpio";
+		};
+		config {
+			pins = "gpio23";
+			drive-strength = <2>;
+			bias-pull-down;
+			input-enable;
+		};
+	};
+
+	fingerprint_sensor_ldo_gpio: fingerprint_sensor_ldo_gpio {
+		mux {
+			pins = "gpio26";
+			function = "gpio";
+		};
+		config {
+			pins = "gpio26";
+			drive-strength = <2>;
+			bias-disable;
+			output-high;
+		};
+	};
+};

@@ -1,0 +1,33 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
+ */
+
+#include "../kona-timelm_common/kona-timelm_common-touch.dtsi"
+
+&qupv3_se13_i2c {
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	status = "ok";
+
+	sw42000@28 {
+		status = "disabled";
+		pinctrl-names = "touch_pin_active", "touch_pin_sleep";
+		pinctrl-0 = <&ts_reset_active &ts_int_active>;
+		pinctrl-1 = <&ts_reset_suspend &ts_int_suspend>;
+	};
+
+	/* Temp Slave Address */
+	active@37 {
+		compatible = "active,pen";
+		status = "ok";
+		reg = <0x37>;
+	};
+
+	sw42902 {
+		compatible = "lge,sw42902";
+		reg = <0x28>;
+		status = "ok";
+	};
+};

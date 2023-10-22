@@ -1,0 +1,193 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
+ */
+
+
+&tlmm {
+    // in sm8250, gpio number of chip->base is plused with 1100
+    // ex) 1128 means that 1100 + 28(gpio number)
+    lge,access-denied-gpios = <1128 1129 1130 1131 1140 1141 1142 1143>;
+
+	sde_dp_aux_active:sde_dp_aux_active {
+		mux{
+			pins = "gpio73", "gpio74";
+			function = "gpio";
+		};
+
+		config {
+			pins = "gpio73", "gpio74";
+			bias-disable = <0>;
+			driver-strength = <8>;
+		};
+	};
+
+	sde_dp_aux_suspend:sde_dp_aux_suspend {
+		mux{
+			pins = "gpio73", "gpio74";
+			function = "gpio";
+		};
+
+		config {
+			pins = "gpio73", "gpio74";
+			bias-pull-down;
+			driver-strength = <8>;
+		};
+	};
+
+    pmx_ts_reset {
+		ts_reset_active: ts_reset_active {
+			mux {
+				pins = "gpio38";
+				function = "gpio";
+			};
+			config {
+				pins = "gpio38";
+				drive-strength = <6>;
+				bias-pull-up;
+			};
+		};
+
+		ts_reset_suspend: ts_reset_suspend {
+			mux {
+				pins = "gpio38";
+				function = "gpio";
+			};
+			config {
+				pins = "gpio38";
+				drive-strength = <6>;
+				bias-pull-down;
+			};
+		};
+	};
+
+	pmx_ts_int {
+		ts_int_active: ts_int_active {
+			mux {
+				pins = "gpio39";
+				function = "gpio";
+			};
+			config {
+				pins = "gpio39";
+				drive-strength = <2>;
+				bias-pull-up;
+			};
+		};
+
+		ts_int_suspend: ts_int_suspend {
+			mux {
+				pins = "gpio39";
+				function = "gpio";
+			};
+			config {
+				pins = "gpio39";
+				drive-strength = <2>;
+				bias-disable;
+			};
+		};
+	};
+
+	ds3_smart_cover_gpio {
+		ds3_smartcover_gpio_default: ds3_smartcover_gpio_default {
+			pins = "gpio126";
+			function = "normal";
+			input-enable;
+			bias-pull-up;
+			power-source = <0>;
+		};
+	};
+	ds3_cover_display_back_gpio {
+		ds3_cover_display_back_gpio_default: ds3_cover_display_back_gpio_default {
+			pins = "gpio134";
+			function = "normal";
+			input-enable;
+			bias-pull-up;
+			power-source = <0>;
+		};
+	};
+
+	luke_gpio {
+		luke_gpio_default: luke_gpio_default {
+			pins = "gpio121";
+			function = "gpio";
+			input-enable;
+			bias-pull-up;
+			power_source = <0>;
+		};
+	};
+
+        almf04_int_pin {
+                almf04_int_active: almf04_int_active {
+                    mux {
+                        pins = "gpio162";
+                        function = "gpio";
+                    };
+                    config {
+                        pins = "gpio162";
+                        drive-strength = <2>;   /* 2 MA */
+                        bias-pull-up;           /* PULL UP*/
+                    };
+                };
+                almf04_int_suspend: almf04_int_suspend {
+                    mux {
+                        pins = "gpio162";
+                        function = "gpio";
+                    };
+                    config {
+                        pins = "gpio162";
+                        drive-strength = <2>;   /* 2 MA */
+                        bias-pull-up;           /* PULL UP */
+                    };
+                };
+        };
+
+        almf04_en_pin {
+                almf04_en_active: almf04_en_active {
+                    mux {
+                        pins = "gpio175";
+                        function = "gpio";
+                    };
+                    config {
+                        pins = "gpio175";
+                        drive-strength = <2>;   /* 2 MA */
+                    };
+                };
+                almf04_en_suspend: almf04_en_suspend {
+                    mux {
+                        pins = "gpio175";
+                        function = "gpio";
+                    };
+                    config {
+                        pins = "gpio175";
+                        drive-strength = <2>;   /* 2 MA */
+                    };
+                };
+        };
+
+	tcs3407_int_pin {
+		tcs3407_int_active: tcs3407_int_active {
+			mux {
+				pins = "gpio125";
+				function ="gpio";
+			};
+			config {
+				pins = "gpio125";
+				drive-strength = <2>;
+				input-enable;
+				bias-disable;
+			};
+		};
+
+		tcs3407_int_suspend: tcs3407_int_suspend {
+			mux {
+				pins = "gpio125";
+				function ="gpio";
+			};
+			config {
+				pins = "gpio125";
+				drive-strength = <2>;
+				bias-disable;
+			};
+		};
+	};
+};

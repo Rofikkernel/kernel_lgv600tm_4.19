@@ -1,0 +1,125 @@
+qcom,LGE_BLT46_Tocad_5000mAh {
+	/* #4332792_LGE_BLT46atl_5000mAh_averaged_MasterSlave_Jan6th2020*/
+	qcom,max-voltage-uv = <4450000>;
+	qcom,fg-cc-cv-threshold-mv = <4430>;
+	qcom,nom-batt-capacity-mah = <5000>;
+	qcom,fastchg-current-ma = <4850>;
+	qcom,batt-id-kohm = <91>;
+	qcom,battery-beta = <4250>;
+	qcom,therm-room-temp = <100000>;
+	qcom,battery-type = "LGE_BLT46_Tocad_5000mAh";
+	qcom,therm-coefficients = <0x2318 0xd0c 0xdaf7 0xc556 0x848d>;
+	qcom,therm-center-offset = <0x70>;
+	qcom,therm-pull-up = <100>;
+	qcom,ki-coeff-low-chg = <0>;
+	qcom,rslow-normal-coeffs = <0xd9 0x0d 0xde 0x0b>;
+	qcom,rslow-low-coeffs = <0x10 0x15 0x29 0xf4>;
+	qcom,checksum = <0xBC2F>;
+	qcom,gui-version = "PM855GUI - 1.0.0.13";
+	qcom,fg-profile-data = [
+		 09 00 5B 00
+		 3B F5 AD FA
+		 F1 F4 00 00
+		 BA BD EA 83
+		 FD 87 FE 95
+		 63 85 35 80
+		 1D 00 D9 0D
+		 DE 0B 6B 0D
+		 D6 03 CE 07
+		 32 00 9D EB
+		 39 ED B5 D4
+		 0A 12 FA CA
+		 C0 C4 C2 0B
+		 2E 03 8E DA
+		 60 00 35 00
+		 44 00 49 00
+		 3D 00 2E 00
+		 33 00 3D 00
+		 3A 00 3F 00
+		 3C 00 60 00
+		 27 00 36 00
+		 43 00 3F 00
+		 37 00 62 00
+		 4C 64 41 00
+		 40 00 43 08
+		 60 00 D7 00
+		 FF 00 FF 10
+		 FF 10 FF 00
+		 FF 28 FF 48
+		 FF 60 FF 0D
+		 FF 00 D8 00
+		 89 20 27 0C
+		 AE 03 38 05
+		 5B 1C 84 03
+		 84 0D B1 22
+		 11 17 8D 42
+		 FB 5C 78 02
+		 6D 10 11 20
+		 F0 04 20 0B
+		 A7 05 EB 1C
+		 D9 F9 07 04
+		 5F 02 D2 17
+		 D3 23 64 44
+		 54 52 7B 11
+		 11 20 0A E5
+		 05 D3 BF E5
+		 F7 1C ED DA
+		 9E 05 17 BB
+		 33 18 5C 8B
+		 01 85 A5 8B
+		 86 90 09 80
+		 E3 F3 2C 04
+		 12 FA 19 FD
+		 00 00 F6 CD
+		 45 E2 F9 F7
+		 49 DB B4 B5
+		 0A 10 13 F0
+		 53 D5 A0 03
+		 03 05 8B 02
+		 CE 07 32 00
+		 74 01 C7 02
+		 35 04 CF 03
+		 29 03 49 03
+		 AC 03 E2 02
+		 19 04 50 00
+		 39 00 42 00
+		 44 64 49 00
+		 48 00 44 08
+		 47 00 47 00
+		 49 00 4A 10
+		 3F 10 3F 00
+		 51 28 53 48
+		 5C 60 6A 0C
+		 48 00 53 00
+		 5D 08 67 00
+		 55 00 40 00
+		 41 10 4D 10
+		 4D 00 5F 20
+		 6B 48 49 58
+		 57 0D 58 00
+		 54 08 3A 10
+		 D8 00 32 20
+		 4B 05 A2 0A
+		 2E 0E BF 1C
+		 92 23 82 45
+		 A0 5A 4A 18
+		 57 02 03 05
+		 A5 02 69 0F
+		 3F 0A 51 20
+		 D9 04 34 03
+		 86 05 C2 1C
+		 4C 03 B5 05
+		 84 02 89 18
+		 F6 03 C3 05
+		 86 03 6A 00
+		 B2 21 A6 05
+		 2B 02 7A 04
+		 F0 1C 1D 02
+		 D3 05 63 02
+		 A4 18 76 03
+		 8D 04 5E 02
+		 86 00 7C 01
+		 C0 00 FA 00
+		 A5 13 00 00
+	];
+};

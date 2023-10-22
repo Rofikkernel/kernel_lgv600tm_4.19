@@ -1,0 +1,35 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
+ */
+
+/dts-v1/;
+/plugin/;
+
+#include "kona-timelm_sb_jp.dtsi"
+#include "../kona-camera/kona-timelm-camera_revb.dtsi"
+#include "kona-timelm_sb_jp-sound_rev-b.dtsi"
+#include "../kona-timelm_common/kona-timelm_common-flicker.dtsi"
+
+/ {
+    model = "LG Electronics, Timelm_sb_jp, rev_b2";
+    compatible = "qcom,kona-mtp", "qcom,kona", "qcom,mtp";
+    qcom,board-id = <0x03070208 0>;
+};
+
+&apps_rsc {
+    rpmh-regulator-ldoc3 {
+        L3C: pm8150a_l3: regulator-pm8150a-l3 {
+            regulator-min-microvolt = <1200000>;
+            regulator-max-microvolt = <1200000>;
+            qcom,init-voltage = <1200000>;
+        };
+    };
+};
+
+&lge_usb_ds3 {
+    lge,ds-en-gpio = <&tlmm 169 0>;
+    lge,acc-supply = <&pm8150a_l3>;
+    lge,acc-detect = <&pm8150l_gpios 10 0x0>;
+    lge,acc_det_vcomp;
+};

@@ -1,0 +1,27 @@
+config LFS_SUSPEND_BGSYNC
+	bool
+	default y if LFS_COMMON
+
+config LFS_ADAPTIVE_READAHEAD
+	bool
+	default y if LFS_COMMON
+
+config LFS_IOSCHED_EXTENSION
+	bool
+	default y if LFS_COMMON
+
+config LFS_IOSCHED_CFQ_PREEMPT
+	bool
+	default y if LFS_COMMON
+
+config LFS_EXT4
+	bool
+	default y if LFS_COMMON
+
+config LFS_SDCARDFS
+	bool
+	default y if LFS_COMMON
+
+config LFS_FAT_FIX_BAD_FORMAT
+	bool
+	default y if LFS_COMMON

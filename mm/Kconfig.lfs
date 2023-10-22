@@ -1,0 +1,3 @@
+config LFS_MM_BDI_STRICTLIMIT_DIRTY
+	bool
+	default y if LFS_COMMON

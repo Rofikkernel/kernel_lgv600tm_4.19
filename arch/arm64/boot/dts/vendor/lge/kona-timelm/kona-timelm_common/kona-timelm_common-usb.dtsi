@@ -1,0 +1,118 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
+ */
+&pm8150b_pdphy {
+    /* FUSB242 */
+    lge,sbu-sel-gpio = <&tlmm 50 0>;
+    /* NL3HS2222MUTBG */
+    lge,uart-sbu-sel-gpio = <&tlmm 62 0>;
+    lge,uart-edp-oe-gpio = <&tlmm 84 0>;
+};
+
+/*
+ * LGE USB Type-C CC/SBU Protection Switch driver
+ */
+&vendor {
+    lge_sbu_switch: lge_sbu_switch {
+        compatible = "lge,lge_sbu_switch";
+
+        lge,sel-gpio = <&tlmm 50 0>;
+        lge,uart-sbu-sel-gpio = <&tlmm 62 0>;
+        lge,uart-edp-oe-gpio = <&tlmm 84 0>;
+        lge,reverse-sbu-switch;
+        /* lge,ovp-gpio */
+
+        pinctrl-names = "default";
+        pinctrl-0 = <&lge_sbu_switch_sel_active /* &lge_sbu_switch_ovp_active */>;
+    };
+};
+
+&tlmm {
+    lge_sbu_switch_sel_active: lge_sbu_switch_sel_active {
+        mux {
+            pins = "gpio50";
+            function = "gpio";
+        };
+
+        config {
+            pins = "gpio50";
+            bias-disable;
+        };
+    };
+
+    lge_ds_en_active: lge_ds_en_active {
+        mux {
+            pins = "gpio169";
+            function = "gpio";
+        };
+
+        config {
+            pins = "gpio169";
+            bias-disable = <0>;
+            drive-strength = <2>;
+        };
+    };
+
+    /*
+    lge_sbu_switch_ovp_active: lge_sbu_switch_ovp_active {
+        mux {
+            pins = "gpio79";
+            function = "gpio";
+        };
+
+        config {
+            pins = "gpio79";
+            bias-pull-up;
+        };
+    };
+    */
+};
+
+/*
+ * LGE USB UART debugger driver
+ */
+&vendor {
+    lge_usb_debugger: lge_usb_debugger {
+        compatible = "lge,usb_debugger";
+        /* lge,always-console-enable; */
+    };
+};
+
+&usb0 {
+    dwc3@a600000 {
+        maximum-speed = "super-speed";
+    };
+};
+
+&usb1 {
+    status = "okay";
+    extcon = <&lge_usb_ds3>;
+    dpdm-supply = <&usb2_phy1>;
+    dwc3@a800000 {
+        maximum-speed = "high-speed";
+        dr_mode = "host";
+        usbpd = <&pm8150b_pdphy>;
+    };
+};
+
+/*
+ * LGE USB DS3 driver
+ */
+&vendor {
+    lge_usb_ds3: lge_usb_ds3 {
+        compatible = "lge,usb_ds3";
+        vconn-supply = <&smb5_vconn>;
+        lge,dd-sw-sel-gpio = <&tlmm 48 0>;
+        lge,load-sw-on-gpio = <&tlmm 112 0>;
+        usbpd = <&pm8150b_pdphy>;
+        pinctrl-names = "default";
+        pinctrl-0 = <&lge_ds_en_active>;
+    };
+};
+
+&usb2_phy0 {
+    qcom,hsusb-phy-tune = <0xE1 0x0F 0x2E 0x03>;
+    qcom,hsusb-phy-tune-host = <0x61 0x83 0x2E 0x03>;
+    qcom,hsusb-phy-tune-ds = <0x61 0x0F 0x2E 0x03>;
+};

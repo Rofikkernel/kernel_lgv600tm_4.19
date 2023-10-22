@@ -1,0 +1,11 @@
+config LFS_UFS
+	bool
+	default y if LFS_COMMON
+
+config LFS_UFS_SYSFS_COMMON
+	bool
+	default y if LFS_COMMON
+
+config LFS_UFSDBG_TUNABLES
+	bool
+	default n

@@ -1,0 +1,68 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
+ */
+
+&reserved_memory {
+	ramoops_region@b0000000 {
+		compatible = "removed-dma-pool";
+		no-map;
+		reg = <0x0 0xb0000000 0x0 0x100000>;
+	};
+};
+
+&soc {
+	ramoops {
+		compatible = "ramoops";
+		reg = <0xb0000000 0x80000>;
+		mem-size = <0x80000>;
+		mem-address = <0xb0000000>;
+		record-size = <4096>;
+		console-size = <0x40000>;
+		ftrace-size = <0x40000>;
+		pmsg-size = <0>;
+		ecc-size = <0>;
+	};
+
+	bootlog {
+		compatible = "bootlog";
+	};
+
+    mcd {
+        compatible = "qcom,mcd";
+        qcom,ce-hw-instance = <0>;
+        qcom,ce-device = <0>;
+        interrupts = <0 472 IRQ_TYPE_EDGE_RISING>;
+        interrupt-names = "mcd_irq";
+    };
+
+
+	pcie1: qcom,pcie@1c08000 {
+		status = "disabled";
+	};
+};
+
+
+&cont_splash_memory {
+	reg = <0x0 0x9c000000 0x0 0x01200000>;
+};
+
+&disp_rdump_memory {
+	reg = <0x0 0x9c000000 0x0 0x01200000>;
+};
+
+&pil_adsp_mem {
+	reg = <0x0 0x8a100000 0x0 0x2500000>;
+};
+
+&pil_spss_mem {
+	reg = <0x0 0x8c600000 0x0 0x100000>;
+};
+
+&cdsp_secure_heap {
+	reg = <0x0 0x8c700000 0x0 0x4600000>;
+};
+
+&spss_utils {
+	qcom,pil-addr = <0x8C200000>; // backward compatible
+};

@@ -1,0 +1,42 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
+ */
+
+
+
+#include "../kona-timelm_common/kona-timelm_common-sound.dtsi"
+#include "../kona-timelm_common/kona-timelm_common-sound-tfa9878.dtsi"
+#include "../kona-timelm_common/kona-timelm_common-sound-es9218.dtsi"
+#include "../kona-timelm_common/kona-timelm_common-sound-fmradio.dtsi"
+#include "../kona-timelm_common/kona-timelm_common-sound-vibrator.dtsi"
+
+&dai_mi2s2 {
+    qcom,msm-mi2s-rx-lines = <2>; /* SD1 used as output */
+    pinctrl-names = "default", "sleep";
+    pinctrl-0 = <&tert_mi2s_sck_active &tert_mi2s_ws_active
+            &tert_mi2s_sd1_active>;
+    pinctrl-1 = <&tert_mi2s_sck_sleep &tert_mi2s_ws_sleep
+            &tert_mi2s_sd1_sleep>;
+};
+
+&dai_mi2s0 {
+		qcom,msm-mi2s-rx-lines = <2>; /* SD1 used as output */
+		qcom,msm-mi2s-tx-lines = <1>; /* SD0 used as input */
+		pinctrl-names = "default", "sleep";
+		pinctrl-0 = <&pri_mi2s_sck_active &pri_mi2s_ws_active
+					&pri_mi2s_sd0_active &pri_mi2s_sd1_active>;
+		pinctrl-1 = <&pri_mi2s_sck_sleep &pri_mi2s_ws_sleep
+					&pri_mi2s_sd0_sleep &pri_mi2s_sd1_sleep>;
+};
+
+&dai_mi2s5 {
+	qcom,msm-mi2s-tx-lines = <1>;
+	qcom,msm-mi2s-rx-lines = <0>;
+};
+
+&kona_snd {
+	asoc-codec  = <&stub_codec>, <&bolero>, <&ext_disp_audio_codec>, <&tfa98xx_spk1>, <&tfa98xx_spk2> ,<&es9218_dac>;
+	asoc-codec-names = "msm-stub-codec.1", "bolero_codec",
+			   "msm-ext-disp-audio-codec-rx","tfa98xx-codec.0034","tfa98xx-codec.0035","es9218-codec.0048";
+};

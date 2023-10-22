@@ -1,0 +1,21 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
+ */
+
+/dts-v1/;
+/plugin/;
+
+#include "kona-timelm_dcm_jp.dtsi"
+#include "../kona-camera/kona-timelm-camera_reva.dtsi"
+#include "kona-timelm_dcm_jp-sound.dtsi"
+
+/ {
+    model = "LG Electronics, Timelm_dcm_jp, rev_a";
+    compatible = "qcom,kona-mtp", "qcom,kona", "qcom,mtp";
+    qcom,board-id = <0x03060008 0>;
+};
+
+&lge_usb_debugger {
+    lge,always-console-enable;
+};

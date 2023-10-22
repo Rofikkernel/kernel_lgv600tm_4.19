@@ -1,0 +1,33 @@
+/*
+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+*
+* This program is free software; you can redistribute it and/or modify
+*it under the terms of the GNU General Public License version 2 and
+* only version 2 as published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+    * but WITHOUT ANY WARRANTY; without even the implied warranty of
+    * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    * GNU General Public License for more details.
+    */
+
+&qupv3_se4_i2c {
+	status = "ok";
+	adsemicon_almf04@5a {
+		compatible = "almf04";
+		status = "ok";
+		reg = <0x5a>;
+		interrupt-parent = <&tlmm>;
+		interrupts = <162 0x2>;
+		pinctrl-names = "default", "sleep";
+		pinctrl-0 = <&almf04_int_active &almf04_en_active>;
+		pinctrl-1 = <&almf04_int_suspend &almf04_en_suspend>;
+		Adsemicon,irq-gpio = <&tlmm 162 0x00>;	/* Interrupt Pin */
+		Adsemicon,vdd_ana_supply_min = <1800000>;
+		Adsemicon,vdd_ana_supply_max = <1800000>;
+		Adsemicon,vdd_ana_load_ua = <15000>;
+		Adsemicon,chip_enable = <&tlmm 175 0x00>;  /* enable pin */
+		Adsemicon,InputPinsNum = <1>;
+		Adsemicon,fw_name = "almf04/ALMF04_Sar2CNew_V2.04T.fw";
+	};
+};

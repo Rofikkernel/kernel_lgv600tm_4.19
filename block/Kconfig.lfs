@@ -1,0 +1,7 @@
+config LFS_BLOCK
+	bool
+	default y if LFS_COMMON
+
+config LFS_BLOCK_RQ
+	bool
+	default y if LFS_COMMON

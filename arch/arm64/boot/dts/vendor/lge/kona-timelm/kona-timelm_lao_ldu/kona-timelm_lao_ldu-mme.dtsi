@@ -1,0 +1,17 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
+ */
+
+&soc {
+       lge-mme-bus {
+               compatible = "lge,mme_bus";
+               lge,app-names = "mme";
+       };
+       lge-mme {
+               compatible = "lge-mme";
+               lge-mme,gpio_sleep_n = <&tlmm 28 0>;
+               lge-mme,gpio_ph = <&tlmm 29 0>;
+               lge-mme,gpio_en = <&tlmm 30 0>;
+       };
+};

@@ -1,0 +1,78 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
+ */
+#include "../../../qcom/kona-audio-overlay.dtsi"
+
+&bolero {
+	wcd938x-codec {
+		qcom,cdc-micbias1-mv = <2700>;
+		qcom,cdc-micbias2-mv = <2000>;
+		qcom,cdc-micbias3-mv = <2700>;
+		qcom,cdc-micbias4-mv = <2700>;
+	};
+};
+
+&kona_snd {
+	qcom,audio-routing =
+		"AMIC1", "MIC BIAS1",
+		"MIC BIAS1", "Analog Mic1",
+		"AMIC2", "MIC BIAS2",
+		"MIC BIAS2", "Analog Mic2",
+		"AMIC3", "MIC BIAS3",
+		"MIC BIAS3", "Analog Mic3",
+		"AMIC4", "MIC BIAS3",
+		"MIC BIAS3", "Analog Mic4",
+		"AMIC5", "MIC BIAS4",
+		"MIC BIAS4", "Analog Mic5",
+		"IN1_HPHL", "HPHL_OUT",
+		"IN2_HPHR", "HPHR_OUT",
+		"IN3_AUX", "AUX_OUT",
+		"TX SWR_ADC0", "ADC1_OUTPUT",
+		"TX SWR_ADC1", "ADC2_OUTPUT",
+		"TX SWR_ADC2", "ADC3_OUTPUT",
+		"TX SWR_ADC3", "ADC4_OUTPUT",
+		"WSA SRC0_INP", "SRC0",
+		"WSA_TX DEC0_INP", "TX DEC0 MUX",
+		"WSA_TX DEC1_INP", "TX DEC1 MUX",
+		"RX_TX DEC0_INP", "TX DEC0 MUX",
+		"RX_TX DEC1_INP", "TX DEC1 MUX",
+		"RX_TX DEC2_INP", "TX DEC2 MUX",
+		"RX_TX DEC3_INP", "TX DEC3 MUX",
+		"VA_AIF1 CAP", "VA_SWR_CLK",
+		"VA_AIF2 CAP", "VA_SWR_CLK",
+		"VA_AIF3 CAP", "VA_SWR_CLK",
+		"VA SWR_ADC0", "ADC1_OUTPUT",
+		"VA SWR_ADC1", "ADC2_OUTPUT",
+		"VA SWR_ADC2", "ADC3_OUTPUT",
+		"VA SWR_ADC3", "ADC4_OUTPUT";
+
+	fsa4480-i2c-handle = <&fsa4480>;
+
+	qcom,msm-mbhc-gnd-swh = <0>;
+	qcom,sen-mi2s-gpios = <&cdc_sen_mi2s_gpios>;
+
+	qcom,msm-mbhc-moist-cfg = <0>, <0>, <2>;
+
+	qcom,wsa-max-devs = <0>;
+};
+
+&wsa_macro {
+	qcom,wsa-swr-gpios;// = <&wsa_swr_gpios>;
+	qcom,is-used-swr-gpio = <0>;
+	swr0: wsa_swr_master {
+		status = "disabled";
+		wsa881x_0211: wsa881x@20170211 {
+			status = "disabled";
+		};
+		wsa881x_0212: wsa881x@20170212 {
+			status = "disabled";
+		};
+		wsa881x_0213: wsa881x@21170213 {
+			status = "disabled";
+		};
+		wsa881x_0214: wsa881x@21170214 {
+			status = "disabled";
+		};
+	};
+};
