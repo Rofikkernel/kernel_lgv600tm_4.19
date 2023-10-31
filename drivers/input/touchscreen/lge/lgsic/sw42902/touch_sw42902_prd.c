@@ -748,6 +748,7 @@ static int sic_get_simple_limit(struct device *dev, char *breakpoint, u16 (*buf)
 	switch (boot_mode) {
 	case TOUCH_NORMAL_BOOT:
 	case TOUCH_MINIOS_AAT:
+	case TOUCH_RECOVERY_MODE:
 	case TOUCH_MINIOS_MFTS_FOLDER:
 	case TOUCH_MINIOS_MFTS_FLAT:
 	case TOUCH_MINIOS_MFTS_CURVED:
@@ -755,7 +756,7 @@ static int sic_get_simple_limit(struct device *dev, char *breakpoint, u16 (*buf)
 		break;
 	case TOUCH_CHARGER_MODE:
 	case TOUCH_LAF_MODE:
-	case TOUCH_RECOVERY_MODE:
+	//case TOUCH_RECOVERY_MODE:
 		TOUCH_I("%s: Etc boot_mode(%d)!!!\n", __func__, boot_mode);
 		ret = -1;
 		goto error;
@@ -833,6 +834,7 @@ static int sic_get_limit(struct device *dev, char *breakpoint, u16 (*buf)[COL_SI
 	switch (boot_mode) {
 	case TOUCH_NORMAL_BOOT:
 	case TOUCH_MINIOS_AAT:
+	case TOUCH_RECOVERY_MODE:
 	case TOUCH_MINIOS_MFTS_FOLDER:
 	case TOUCH_MINIOS_MFTS_FLAT:
 	case TOUCH_MINIOS_MFTS_CURVED:
@@ -840,7 +842,7 @@ static int sic_get_limit(struct device *dev, char *breakpoint, u16 (*buf)[COL_SI
 		break;
 	case TOUCH_CHARGER_MODE:
 	case TOUCH_LAF_MODE:
-	case TOUCH_RECOVERY_MODE:
+	//case TOUCH_RECOVERY_MODE:
 		TOUCH_I("%s: Etc boot_mode(%d)!!!\n", __func__, boot_mode);
 		ret = -1;
 		goto error;

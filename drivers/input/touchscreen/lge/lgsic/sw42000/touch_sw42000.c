@@ -2514,7 +2514,7 @@ static int sw42000_probe(struct device *dev)
 	boot_mode = touch_check_boot_mode(dev);
 	if (boot_mode == TOUCH_CHARGER_MODE
 			|| boot_mode == TOUCH_LAF_MODE
-			|| boot_mode == TOUCH_RECOVERY_MODE) {
+			) {
 		TOUCH_I("%s: boot_mode = %d\n", __func__, boot_mode);
 		touch_gpio_init(ts->reset_pin, "touch_reset");
 		touch_gpio_direction_output(ts->reset_pin, 1);
@@ -3438,6 +3438,7 @@ static int sw42000_suspend(struct device *dev)
 	switch (boot_mode) {
 	case TOUCH_NORMAL_BOOT:
 	case TOUCH_MINIOS_AAT:
+	case TOUCH_RECOVERY_MODE:
 		break;
 	case TOUCH_MINIOS_MFTS_FOLDER:
 	case TOUCH_MINIOS_MFTS_FLAT:
@@ -3450,7 +3451,7 @@ static int sw42000_suspend(struct device *dev)
 		break;
 	case TOUCH_CHARGER_MODE:
 	case TOUCH_LAF_MODE:
-	case TOUCH_RECOVERY_MODE:
+	//case TOUCH_RECOVERY_MODE:
 		TOUCH_I("%s: Etc boot_mode(%d)!!!\n", __func__, boot_mode);
 		return -EPERM;
 	default:
@@ -3504,6 +3505,7 @@ static int sw42000_resume(struct device *dev)
 	switch (boot_mode) {
 	case TOUCH_NORMAL_BOOT:
 	case TOUCH_MINIOS_AAT:
+	case TOUCH_RECOVERY_MODE:
 		break;
 	case TOUCH_MINIOS_MFTS_FOLDER:
 	case TOUCH_MINIOS_MFTS_FLAT:
@@ -3524,7 +3526,7 @@ static int sw42000_resume(struct device *dev)
 		break;
 	case TOUCH_CHARGER_MODE:
 	case TOUCH_LAF_MODE:
-	case TOUCH_RECOVERY_MODE:
+	//case TOUCH_RECOVERY_MODE:
 		TOUCH_I("%s: Etc boot_mode(%d)!!!\n", __func__, boot_mode);
 		sw42000_sleep_ctrl(dev, IC_DEEP_SLEEP);
 		return -EPERM;
