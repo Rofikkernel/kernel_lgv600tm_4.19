@@ -719,13 +719,18 @@ static ssize_t thermald_vdc_store(struct device* dev, struct device_attribute* a
 	return size;
 }
 static ssize_t thermald_vdc_show(struct device* dev, struct device_attribute* attr, char* buf) {
-	struct power_supply* wireless = power_supply_get_by_name("wireless");
 	union power_supply_propval voltage = { .intval = 0, };
+	static struct power_supply* wireless = NULL;
+	int rc = 0;
+
+	if (!wireless)
+		wireless = power_supply_get_by_name("wireless");
 
 	if (dev && dev->platform_data) {
 		if (wireless) {
-			power_supply_get_property(wireless, POWER_SUPPLY_PROP_VOLTAGE_MAX, &voltage);
-			power_supply_put(wireless);
+			rc = power_supply_get_property(wireless, POWER_SUPPLY_PROP_VOLTAGE_MAX, &voltage);
+			if (!rc)
+				power_supply_put(wireless);
 		}
 	} else
 		pr_uninode("Error on getting voter\n");
@@ -1050,7 +1055,6 @@ static ssize_t battery_condition_show(struct device* dev, struct device_attribut
 	int condition_ret_best = 1;
 	int condition_ret_good = 2;
 	int condition_ret_bad = 3;
-	int condition_ret_abnormal = 0;
 
 	if (!!battery_age_show(dev, attr, buf) && !!sscanf(buf, "%d", &age) && age >= 0) {
 		if (age >= age_thresold_best)
@@ -1059,8 +1063,6 @@ static ssize_t battery_condition_show(struct device* dev, struct device_attribut
 			ret = condition_ret_good;
 		else if (age >= age_thresold_bad)
 			ret = condition_ret_bad;
-		else
-			ret = condition_ret_abnormal;
 	}
 
 	return snprintf(buf, PAGE_SIZE, "%d", ret);
@@ -1204,11 +1206,13 @@ static ssize_t charger_incompatible_show(struct device* dev, struct device_attri
 static ssize_t charger_usbid_show(struct device* dev, struct device_attribute* attr, char* buf) {
 	struct power_supply* 		usb = power_supply_get_by_name("usb");
 	union power_supply_propval	prp = { .intval = 0, };
+	int rc = 0;
 
 	if (dev && dev->platform_data) {
 		if (usb) {
-			power_supply_get_property(usb, POWER_SUPPLY_PROP_RESISTANCE, &prp);
-			power_supply_put(usb);
+			rc = power_supply_get_property(usb, POWER_SUPPLY_PROP_RESISTANCE, &prp);
+			if (!rc)
+				power_supply_put(usb);
 		}
 	}
 
@@ -1454,10 +1458,12 @@ static ssize_t actm_sensor_store(
 			case 3: ori = &ref->actm.sensor_type[1]; break;
 		}
 
-		sscanf(buf, "%d", &new);
-		if (*ori != new) {
-			if (new == 1 || new == 2 || new == 3)
-				*ori = new;
+		if (ori) {
+			sscanf(buf, "%d", &new);
+			if (*ori != new) {
+				if (new == 1 || new == 2 || new == 3)
+					*ori = new;
+			}
 		}
 	}
 
@@ -1502,9 +1508,11 @@ static ssize_t actm_holddeg_store(
 			case 9: ori = &ref->actm.max_hold_criteria_wireless[2]; break;
 		}
 
-		sscanf(buf, "%d", &new);
-		if (*ori != new && new > 0)
-			*ori = new;
+		if (ori) {
+			sscanf(buf, "%d", &new);
+			if (*ori != new && new > 0)
+				*ori = new;
+		}
 	}
 
 	return size;
@@ -1552,9 +1560,11 @@ static ssize_t actm_tempoffs_store(
 			case 15: ori = &ref->actm.tempoffs_wireless[2]; break;
 		}
 
-		sscanf(buf, "%d", &new);
-		if (*ori != new)
-			*ori = new;
+		if (ori) {
+			sscanf(buf, "%d", &new);
+			if (*ori != new)
+				*ori = new;
+		}
 	}
 
 	return size;
@@ -1610,9 +1620,11 @@ static ssize_t actm_current_store(
 			case 29: ori = &ref->actm.wired_max_fcc[2]; break;
 		}
 
-		sscanf(buf, "%d", &new);
-		if (*ori != new && new > 0)
-			*ori = new;
+		if (ori) {
+			sscanf(buf, "%d", &new);
+			if (*ori != new && new > 0)
+				*ori = new;
+		}
 	}
 
 	return size;

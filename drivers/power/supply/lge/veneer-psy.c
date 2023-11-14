@@ -355,7 +355,8 @@ static void update_veneer_supplier(struct veneer* veneer_me)
 	}
 	else if (veneer_me->presence_wireless) {
 		psy = get_psy_wireless(veneer_me);
-		new = supplier_wireless(veneer_me, psy, &val);
+		if (psy)
+			new = supplier_wireless(veneer_me, psy, &val);
 	}
 	else {
 		/* 'new' may be 'NONE' at the initial time and it will be updated soon */
@@ -381,6 +382,7 @@ static void update_veneer_uninodes(struct veneer* veneer_me)
 	int mw_highspeed = INT_MAX;
 	int mw_now = 0, stored = 0;
 	struct power_supply*	psy = NULL;
+	int rc = 0;
 
     // 'bootcmd: lge.charger_verbose=(%bool)'
 	//		is adopted to branch vzw/att or not.
@@ -441,8 +443,9 @@ static void update_veneer_uninodes(struct veneer* veneer_me)
 
 		if (psy) {
 			union power_supply_propval val = { .intval = 0, };
-			power_supply_get_property(psy, POWER_SUPPLY_PROP_POWER_NOW, &val);
-			mw_now = val.intval / 1000;
+			rc = power_supply_get_property(psy, POWER_SUPPLY_PROP_POWER_NOW, &val);
+			if (!rc)
+				mw_now = val.intval / 1000;
 			pr_veneer("mw_now = %d\n", mw_now);
 		}
 
@@ -455,7 +458,7 @@ static void update_veneer_uninodes(struct veneer* veneer_me)
 			"if buff == 1 && !CHARGING_SUPPLY_TYPE_NONE\n");
 
 	/* Finally, updating charger name here */
-	unified_nodes_store("charger_name", name, sizeof(name));
+	unified_nodes_store("charger_name", name, strlen(name));
 }
 
 static void update_veneer_status(struct veneer* veneer_me)
@@ -599,9 +602,6 @@ static void detect_slowchg_timer(struct work_struct* work)
 		container_of(work, struct veneer, dwork_slowchg.work);
 	struct power_supply* battery;
 	char buf [2] = { 0, };
-
-	if (!veneer_me)
-		return;
 
 	if (detect_slowchg_required(veneer_me)) {
 		battery = get_psy_battery(veneer_me);
@@ -1215,8 +1215,6 @@ int get_veneer_param(int id, int *val)
 	if (!veneer_me)
 		return -1;
 
-	*val = -9999;
-
 	psy_cp = get_psy_cp(veneer_me);
 	psy_usb = get_psy_usb(veneer_me);
 	psy_batt = get_psy_battery(veneer_me);
@@ -1225,6 +1223,8 @@ int get_veneer_param(int id, int *val)
 
 	if (!psy_cp || !psy_usb || !psy_batt || !psy_wireless || !tzd || !val)
 		return -1;
+
+	*val = -9999;
 
 	switch (id) {
 		case VENEER_FEED_ACTM_MODE:
@@ -1897,6 +1897,9 @@ static int veneer_probe(struct platform_device *pdev)
 {
 	struct device* veneer_dev = &pdev->dev;
 	struct veneer* veneer_me = kzalloc(sizeof(struct veneer), GFP_KERNEL);
+
+	if (!veneer_me)
+		return -ENOMEM;
 
 	veneer_me->veneer_dev = veneer_dev;
 

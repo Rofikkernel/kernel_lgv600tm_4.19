@@ -78,6 +78,15 @@ enum hdd_wext_control {
  *
  * </ini>
  */
+#ifdef FEATURE_SUPPORT_LGE
+#define CFG_PRIVATE_WEXT_CONTROL CFG_INI_UINT( \
+			"private_wext_control", \
+			hdd_wext_disabled, \
+			hdd_wext_enabled, \
+			hdd_wext_enabled, \
+			CFG_VALUE_OR_DEFAULT, \
+			"Private WEXT Control")
+#else
 #define CFG_PRIVATE_WEXT_CONTROL CFG_INI_UINT( \
 			"private_wext_control", \
 			hdd_wext_disabled, \
@@ -85,7 +94,7 @@ enum hdd_wext_control {
 			hdd_wext_deprecated, \
 			CFG_VALUE_OR_DEFAULT, \
 			"Private WEXT Control")
-
+#endif
 enum hdd_dot11_mode {
 	eHDD_DOT11_MODE_AUTO = 0,       /* covers all things we support */
 	eHDD_DOT11_MODE_abg,    /* 11a/b/g only, no HT, no proprietary */
@@ -1401,6 +1410,7 @@ struct dhcp_server {
  *
  * </ini>
  */
+//LGE_Patch (Cayman: set to 0 because CONFIG_WLAN_FEATURE_SARV1_TO_SARV2 is n)
 #define CFG_SAR_CONVERSION  CFG_INI_BOOL( \
 			"gEnableSARV1toSARV2", \
 			0, \

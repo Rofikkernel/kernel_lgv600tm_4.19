@@ -107,20 +107,24 @@ static inline void log_eol(u16 source, u32 cpuid)
  */
 static inline void log_char(char ch, u16 source, u32 cpuid)
 {
-	if (ch == '\0')
-		return;
+    if (ch == '\0')
+        return;
 
-	if (ch == '\n' || ch == '\r') {
-		log_eol(source, cpuid);
-		return;
-	}
+    if (ch == '\n' || ch == '\r') {
+        log_eol(source, cpuid);
+        return;
+    }
 
-	if (log_ctx.line_len >= LOG_LINE_SIZE || source != log_ctx.prev_source)
-		log_eol(source, cpuid);
+    if (log_ctx.line_len >= LOG_LINE_SIZE ||
+        source != log_ctx.prev_source) {
+        log_eol(source, cpuid);
+        /* This is useless but some static analysis tools want it */
+        log_ctx.line_len = 0;
+    }
 
-	log_ctx.line[log_ctx.line_len++] = ch;
-	log_ctx.line[log_ctx.line_len] = 0;
-	log_ctx.prev_source = source;
+    log_ctx.line[log_ctx.line_len++] = ch;
+    log_ctx.line[log_ctx.line_len] = 0;
+    log_ctx.prev_source = source;
 }
 
 static inline void log_string(u32 ch, u16 source, u32 cpuid)

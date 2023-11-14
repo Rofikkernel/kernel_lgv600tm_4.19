@@ -3,8 +3,11 @@ ifeq ($(CONFIG_CNSS_QCA6290), y)
 		CONFIG_QCA_WIFI_NAPIER_EMULATION := y
 	endif
 	CONFIG_LITHIUM := y
-	CONFIG_QCA6290_11AX := y
-	CONFIG_WLAN_FEATURE_11AX := y
+	# LGE_patch : disable 11ax for LDU
+	ifneq ($(CONFIG_MACH_KONA_TIMELM_LAO_LDU), y)
+		CONFIG_QCA6290_11AX := y
+		CONFIG_WLAN_FEATURE_11AX := y
+	endif
 	CONFIG_WLAN_FEATURE_DFS_OFFLOAD := y
 	CONFIG_IPA3 := n
 endif
@@ -14,7 +17,10 @@ ifeq ($(CONFIG_CNSS_QCA6390), y)
 		CONFIG_QCA_WIFI_NAPIER_EMULATION := y
 	endif
 	CONFIG_LITHIUM := y
-	CONFIG_WLAN_FEATURE_11AX := y
+	# LGE_patch : disable 11ax for LDU
+	ifneq ($(CONFIG_MACH_KONA_TIMELM_LAO_LDU), y)
+		CONFIG_WLAN_FEATURE_11AX := y
+	endif
 	CONFIG_WLAN_FEATURE_DFS_OFFLOAD := y
 	ifeq ($(CONFIG_ARCH_SDM845), y)
 		CONFIG_IPA3 := n
@@ -178,6 +184,7 @@ CONFIG_QCACLD_FEATURE_GREEN_AP := y
 CONFIG_QCACLD_FEATURE_APF := y
 
 #Flag to enable SARv1 -> SARv2 conversion
+#FEATURE_SUPPORT_LGE (Cayman: n)
 CONFIG_WLAN_FEATURE_SARV1_TO_SARV2 := n
 
 #Flag to enable get firmware state
@@ -475,14 +482,14 @@ endif
 # way no critical debug feature will be enabled for perf and shipment
 # builds. Other OEMs are also protected using the TARGET_BUILD_VARIANT
 # config.
-#ifneq ($(TARGET_BUILD_VARIANT),user)
+ifneq ($(TARGET_BUILD_VARIANT),user)
 	ifeq ($(CONFIG_LITHIUM), y)
-		CONFIG_FEATURE_PKTLOG := y
+		CONFIG_FEATURE_PKTLOG := n
 	else
 		CONFIG_FEATURE_PKTLOG := y
 	endif
 	CONFIG_WLAN_DEBUG_CRASH_INJECT := y
-#endif
+endif
 
 #Enable WLAN/Power debugfs feature only if debug_fs is enabled
 ifeq ($(CONFIG_DEBUG_FS), y)
@@ -648,12 +655,6 @@ endif
 
 ifeq ($(CONFIG_LITHIUM), y)
 CONFIG_PKTLOG_LEGACY := n
-endif
-
-ifeq ($(CONFIG_LITHIUM), y)
-CONFIG_WAPI_BIG_ENDIAN := y
-else
-CONFIG_WAPI_BIG_ENDIAN := n
 endif
 
 #Enable WDI Event support
@@ -921,10 +922,12 @@ ifeq ($(CONFIG_SLUB_DEBUG_ON), y)
 	CONFIG_DESC_TIMESTAMP_DEBUG_INFO := y
 	CONFIG_FEATURE_UNIT_TEST_SUSPEND := y
 	CONFIG_LEAK_DETECTION := y
-	CONFIG_MAX_LOGS_PER_SEC := 500
+	# LGE_Patch : do not check max log condition (STS Fail:TIME-3162)
+	#CONFIG_MAX_LOGS_PER_SEC := 500
 	CONFIG_SCHED_HISTORY_SIZE := 256
 	CONFIG_TALLOC_DEBUG := y
 	CONFIG_UNIT_TEST := y
+	#CONFIG_RX_DESC_DEBUG_CHECK:= y
 	CONFIG_REGISTER_OP_DEBUG := y
 	CONFIG_ENABLE_QDF_PTR_HASH_DEBUG := y
 endif

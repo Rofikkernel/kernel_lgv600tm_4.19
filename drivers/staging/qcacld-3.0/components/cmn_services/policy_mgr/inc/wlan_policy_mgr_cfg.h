@@ -511,10 +511,15 @@ CFG_INI_BOOL("g_nan_sap_scc_on_lte_coex_chan", 1, \
  *
  * </ini>
  */
+#ifdef FEATURE_SUPPORT_LGE
+#define CFG_STA_SAP_SCC_ON_LTE_COEX_CHAN \
+CFG_INI_UINT("g_sta_sap_scc_on_lte_coex_chan", 0, 1, 0, CFG_VALUE_OR_DEFAULT, \
+	     "Allow STA+SAP SCC on LTE coex channel")
+#else
 #define CFG_STA_SAP_SCC_ON_LTE_COEX_CHAN \
 CFG_INI_UINT("g_sta_sap_scc_on_lte_coex_chan", 0, 1, 1, CFG_VALUE_OR_DEFAULT, \
 	     "Allow STA+SAP SCC on LTE coex channel")
-
+#endif
 /*
  * <ini>
  * g_mark_sap_indoor_as_disable - Enable/Disable Indoor channel

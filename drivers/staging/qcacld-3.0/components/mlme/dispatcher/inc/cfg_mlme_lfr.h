@@ -2426,6 +2426,15 @@
  *
  * </ini>
  */
+#ifdef FEATURE_SUPPORT_LGE
+#define CFG_STA_DISABLE_ROAM CFG_INI_UINT( \
+		"sta_disable_roam", \
+		0, \
+		0xffffffff, \
+		0xffffffff, \
+		CFG_VALUE_OR_DEFAULT, \
+		"disable roam on STA iface if one of the iface mentioned in default is in connected state")
+#else
 #define CFG_STA_DISABLE_ROAM CFG_INI_UINT( \
 		"sta_disable_roam", \
 		0, \
@@ -2433,6 +2442,7 @@
 		0x00, \
 		CFG_VALUE_OR_DEFAULT, \
 		"disable roam on STA iface if one of the iface mentioned in default is in connected state")
+#endif
 
 #define ROAM_OFFLOAD_ALL \
 	CFG(CFG_LFR3_ROAMING_OFFLOAD) \

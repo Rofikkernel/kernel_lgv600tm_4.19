@@ -1347,7 +1347,8 @@ skip_defrtr:
 
 /* 2021-03-04 jaewoo1.kim@lge.com LGP_DATA_TCPIP_DISABLE_ACCEPT_RA_DEFRTR [START] */
 // add for vzw
-	if (sysctl_optr == VZW_CARRIER) {
+	if (sysctl_optr == VZW_CARRIER &&
+            strncmp(skb->dev->name, "rmnet_data", 10) == 0) {
 		patch_code_id("LPCP-1818@y@c@vmlinux@ndisc.c@1");
 		net = dev_net(in6_dev->dev);
 		rt = rt6_get_dflt_router(net, &ipv6_hdr(skb)->saddr, skb->dev);

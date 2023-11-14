@@ -3015,14 +3015,9 @@ void hif_fastpath_resume(struct hif_opaque_softc *hif_ctx)
  */
 int hif_runtime_resume(struct hif_opaque_softc *hif_ctx)
 {
-	int errno;
-
 	QDF_BUG(!hif_bus_resume_noirq(hif_ctx));
-	errno = hif_bus_resume(hif_ctx);
-	if (errno)
-		HIF_ERROR("%s: failed runtime resume: %d", __func__, errno);
-
-	return errno;
+	QDF_BUG(!hif_bus_resume(hif_ctx));
+	return 0;
 }
 #endif /* #ifdef FEATURE_RUNTIME_PM */
 

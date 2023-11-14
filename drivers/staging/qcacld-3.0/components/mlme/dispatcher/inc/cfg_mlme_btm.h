@@ -112,7 +112,7 @@
 	"btm_offload_config", \
 	0x00000000, \
 	0xffffffff, \
-	0x000001c1, \
+	0x00000000, /*LGE Configuration*/\
 	CFG_VALUE_OR_DEFAULT, \
 	"configure btm offload")
 

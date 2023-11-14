@@ -1307,7 +1307,7 @@ static void if_tag_stat_update(const char *ifname, uid_t uid,
 		tag = sock_tag_entry->tag;
 		acct_tag = get_atag_from_tag(tag);
 		uid_tag = get_utag_from_tag(tag);
-        }
+	}
 	spin_unlock_bh(&sock_tag_list_lock);
 	if (!sock_tag_entry) {
 		acct_tag = make_atag_from_value(0);

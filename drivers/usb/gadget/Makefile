@@ -12,3 +12,4 @@ libcomposite-y			+= composite.o functions.o configfs.o u_f.o
 
 obj-$(CONFIG_USB_GADGET)	+= udc/ function/ legacy/
 obj-$(CONFIG_LGE_USB_GADGET)	+= u_lgeusb.o
+obj-$(CONFIG_USB_CI13XXX_MSM)   += ci13xxx_msm.o

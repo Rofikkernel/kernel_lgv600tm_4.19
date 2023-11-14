@@ -186,7 +186,6 @@ static ssize_t store_lpwg_notify(struct device *dev,
 	switch (boot_mode) {
 	case TOUCH_NORMAL_BOOT:
 	case TOUCH_MINIOS_AAT:
-	case TOUCH_RECOVERY_MODE:
 		break;
 	case TOUCH_MINIOS_MFTS_FOLDER:
 	case TOUCH_MINIOS_MFTS_FLAT:
@@ -197,7 +196,7 @@ static ssize_t store_lpwg_notify(struct device *dev,
 			break;
 	case TOUCH_CHARGER_MODE:
 	case TOUCH_LAF_MODE:
-	//case TOUCH_RECOVERY_MODE:
+	case TOUCH_RECOVERY_MODE:
 		return count;
 	default:
 		TOUCH_E("invalid boot_mode(%d)\n", boot_mode);
@@ -1829,7 +1828,7 @@ error:
 int touch_init_sysfs_module(struct module_data *md, void *module_ts)
 {
 	struct touch_core_data *ts = (struct touch_core_data *)module_ts;
-	int ret;
+	int ret = 0;
 
 	if (md->m_driver.register_sysfs != NULL) {
 		ret = kobject_init_and_add(&md->kobj, &touch_kobj_type_module,

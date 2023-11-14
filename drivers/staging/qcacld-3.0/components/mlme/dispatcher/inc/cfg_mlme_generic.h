@@ -661,9 +661,16 @@
  *
  * </ini>
  */
+
+#ifdef FEATURE_SUPPORT_LGE
+#define CFG_BMISS_SKIP_FULL_SCAN CFG_INI_BOOL("bmiss_skip_full_scan", \
+			1, \
+			"To decide partial/partial scan followed by full scan")
+#else
 #define CFG_BMISS_SKIP_FULL_SCAN CFG_INI_BOOL("bmiss_skip_full_scan", \
 			0, \
 			"To decide partial/partial scan followed by full scan")
+#endif
 
 /*
  * <ini>

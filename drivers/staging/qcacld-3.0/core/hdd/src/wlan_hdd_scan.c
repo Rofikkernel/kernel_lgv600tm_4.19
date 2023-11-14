@@ -51,6 +51,12 @@
 #define SCAN_DONE_EVENT_BUF_SIZE 4096
 #define RATE_MASK 0x7f
 
+#ifdef FEATURE_SUPPORT_LGE
+/*LGE_CHNAGE_S, DRIVER scan_suppress command, 2017-07-12, moon-wifi@lge.com*/
+uint8_t static g_scansuppress_mode = 0;
+/*LGE_CHNAGE_E, DRIVER scan_suppress command, 2017-07-12, moon-wifi@lge.com*/
+#endif
+
 /**
  * hdd_vendor_scan_callback() - Scan completed callback event
  * @hddctx: HDD context
@@ -499,6 +505,15 @@ static int __wlan_hdd_cfg80211_scan(struct wiphy *wiphy,
 		hdd_err("Failed to get self recovery ini config");
 		return -EIO;
 	}
+
+#ifdef FEATURE_SUPPORT_LGE
+/*LGE_CHNAGE_S, DRIVER scan_suppress command, 2017-07-12, moon-wifi@lge.com*/
+	if ((g_scansuppress_mode == 1) && (request->wdev->iftype != NL80211_IFTYPE_AP)) {
+		hdd_err("lge priv-command scansuppress is enabled, scan is not allowed");
+		return -EPERM;
+	}
+/*LGE_CHNAGE_E, DRIVER scan_suppress command, 2017-07-12, moon-wifi@lge.com*/
+#endif
 
 	enable_connected_scan = ucfg_scan_is_connected_scan_enabled(
 							hdd_ctx->psoc);
@@ -1596,3 +1611,16 @@ int hdd_scan_context_init(struct hdd_context *hdd_ctx)
 {
 	return 0;
 }
+
+#ifdef FEATURE_SUPPORT_LGE
+/*LGE_CHNAGE_S, DRIVER scan_suppress command, 2017-07-12, moon-wifi@lge.com*/
+void wlan_hdd_set_scan_suppress(uint8_t on_off);
+void wlan_hdd_set_scan_suppress(uint8_t on_off) {
+	if (on_off == 1) {
+		g_scansuppress_mode = 1;
+	} else {
+		g_scansuppress_mode = 0;
+	}
+}
+/*LGE_CHNAGE_E, DRIVER scan_suppress command, 2017-07-12, moon-wifi@lge.com*/
+#endif

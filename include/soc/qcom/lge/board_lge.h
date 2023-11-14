@@ -53,6 +53,10 @@ typedef enum {
 } lge_touch_id_t;
 lge_touch_id_t lge_get_touch_id(void);
 #endif
+#ifdef CONFIG_LGE_HANDLE_PANIC
+int lge_get_force_reboot_crash(void);
+int lge_get_retrycount(void);
+#endif
 enum hw_rev_no {
 	HW_REV_EVB1 = 0,
 	HW_REV_EVB2,

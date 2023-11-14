@@ -671,14 +671,18 @@ void convert_qos_mapset_frame(struct mac_context *mac, struct qos_map_set *qos,
 
 	for (i = 0; i < qos->num_dscp_exceptions &&
 	     j < dot11_dscp_exception_sz - 1; i++) {
-		qos->dscp_exceptions[i][0] = dot11f_ie->dscp_exceptions[j++];
-		qos->dscp_exceptions[i][1] = dot11f_ie->dscp_exceptions[j++];
+		qos->dscp_exceptions[i][0] = dot11f_ie->dscp_exceptions[j];
+		++j; //LGE_PATCH, To solve code x-ray
+		qos->dscp_exceptions[i][1] = dot11f_ie->dscp_exceptions[j];
+		++j; //LGE_PATCH, To solve code x-ray
 	}
 
 	for (i = 0; i < QOS_MAP_RANGE_NUM &&
 	     j < dot11f_ie->num_dscp_exceptions - 1; i++) {
-		qos->dscp_range[i][0] = dot11f_ie->dscp_exceptions[j++];
-		qos->dscp_range[i][1] = dot11f_ie->dscp_exceptions[j++];
+		qos->dscp_range[i][0] = dot11f_ie->dscp_exceptions[j];
+		++j; //LGE_PATCH, To solve code x-ray
+		qos->dscp_range[i][1] = dot11f_ie->dscp_exceptions[j];
+		++j; //LGE_PATCH, To solve code x-ray
 	}
 }
 

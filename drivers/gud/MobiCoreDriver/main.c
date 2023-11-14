@@ -648,15 +648,18 @@ static int mobicore_probe(struct platform_device *pdev)
 
 #ifndef MC_DELAYED_TEE_START
 		ret = mobicore_start();
-#endif
 		if (ret)
 			goto err_start;
+#endif
 	}
 
 	return 0;
 
+#ifndef MC_DELAYED_TEE_START
 err_start:
-	device_admin_exit();
+#endif
+    if (!is_xen_domu())
+        device_admin_exit();
 err_admin:
 	device_common_exit();
 err_common:

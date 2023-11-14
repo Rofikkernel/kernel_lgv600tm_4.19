@@ -310,13 +310,20 @@ int touch_check_irq(unsigned int irq, struct device *dev)
 {
 	struct irq_desc *desc = irq_to_desc(irq);
 	struct irqaction *action;
-	action = desc->action;
-	if (desc == NULL || action == NULL) {
+
+	if (desc == NULL) {
 		TOUCH_I("irq is not connected");
 		return -EPERM;
-	} else {
-		TOUCH_I("irq checked: %d", desc->irq_data.irq);
 	}
+
+	action = desc->action;
+	if (action == NULL) {
+		TOUCH_I("irq is not connected");
+		return -EPERM;
+	}
+
+	TOUCH_I("irq checked: %d", desc->irq_data.irq);
+
 	return 0;
 }
 

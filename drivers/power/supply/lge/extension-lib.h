@@ -188,6 +188,7 @@ struct ext_smb_charger {
 	// abnormal operation during PPS TA CP Charing
 	bool enable_bad_operation_pps_ta;
 	bool is_bad_operation_pps_ta;
+	bool bad_pps_ta_detected;
 	int bad_operation_pps_ta_count;
 	struct delayed_work wa_bad_operation_pps_ta_dwork;
 

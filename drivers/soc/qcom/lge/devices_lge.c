@@ -89,6 +89,48 @@ lge_touch_id_t lge_get_touch_id(void)
 }
 #endif
 
+#ifdef CONFIG_LGE_HANDLE_PANIC
+static int lge_force_reboot_crash;
+int lge_get_force_reboot_crash(void)
+{
+	return lge_force_reboot_crash;
+}
+EXPORT_SYMBOL(lge_get_force_reboot_crash);
+
+static int __init lge_force_reboot_crash_init (char *s)
+{
+	if (!strcmp(s, "1"))
+		lge_force_reboot_crash = 1;
+	else
+		lge_force_reboot_crash = 0;
+
+	pr_info("lge_force_reboot_crash : %d\n",lge_force_reboot_crash);
+
+	return 0;
+}
+__setup("androidboot.vendor.lge.force.reboot.crash=", lge_force_reboot_crash_init);
+
+static int lge_retrycount;
+int lge_get_retrycount(void)
+{
+	return lge_retrycount;
+}
+EXPORT_SYMBOL(lge_get_retrycount);
+
+static int __init lge_get_retrycount_init (char *s)
+{
+	if (!strcmp(s, "1"))
+		lge_retrycount = 1;
+	else
+		lge_retrycount = 0;
+
+	pr_info("lge_retrycount : %d\n",lge_retrycount);
+
+	return 0;
+}
+__setup("androidboot.vendor.lge.retrycount=", lge_get_retrycount_init);
+#endif
+
 #ifdef CONFIG_LGE_USB_FACTORY
 /* get boot mode information from cmdline.
  * If any boot mode is not specified,

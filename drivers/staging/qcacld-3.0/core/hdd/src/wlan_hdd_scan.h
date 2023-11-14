@@ -214,5 +214,10 @@ struct nla_policy wlan_hdd_extscan_config_policy[EXTSCAN_PARAM_MAX + 1] = {
 				.type = NLA_U32},
 };
 
+#ifdef FEATURE_SUPPORT_LGE
+/*LGE_CHNAGE_S, DRIVER scan_suppress command, 2017-07-12, moon-wifi@lge.com*/
+void wlan_hdd_set_scan_suppress(uint8_t on_off);
+/*LGE_CHNAGE_E, DRIVER scan_suppress command, 2017-07-12, moon-wifi@lge.com*/
+#endif
 #endif /* end #if !defined(WLAN_HDD_SCAN_H) */
 

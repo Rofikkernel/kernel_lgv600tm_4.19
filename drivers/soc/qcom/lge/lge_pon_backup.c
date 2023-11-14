@@ -229,6 +229,7 @@ static int lge_pon_backup_probe(struct platform_device *pdev)
 			PON_BACKUP_MAX_PMIC * 3);
 	if (rc) {
 		pr_err("Fail to get dt of regulator table.\n");
+		kfree(pon_backup);
 		return -EIO;
 	}
 

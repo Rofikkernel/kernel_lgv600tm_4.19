@@ -38,6 +38,7 @@
 					"lpass_audio_hw_vote";
 			clocks = <&lpass_core_hw_vote 0>,
 					<&lpass_audio_hw_vote 0>;
+			qcom,swr-master-version = <0x01050001>;
 			qcom,swr_master_id = <3>;
 			qcom,mipi-sdw-block-packing-mode = <1>;
 			swrm-io-base = <0x3230000 0x0>;
@@ -82,6 +83,7 @@
 					"lpass_audio_hw_vote";
 			clocks = <&lpass_core_hw_vote 0>,
 					<&lpass_audio_hw_vote 0>;
+			qcom,swr-master-version = <0x01050001>;
 			qcom,swr_master_id = <2>;
 			qcom,mipi-sdw-block-packing-mode = <1>;
 			swrm-io-base = <0x3210000 0x0>;
@@ -121,6 +123,7 @@
 					"lpass_audio_hw_vote";
 			clocks = <&lpass_core_hw_vote 0>,
 					<&lpass_audio_hw_vote 0>;
+			qcom,swr-master-version = <0x01050001>;
 			qcom,swr_master_id = <1>;
 			qcom,mipi-sdw-block-packing-mode = <0>;
 			swrm-io-base = <0x3250000 0x0>;
@@ -134,31 +137,31 @@
 				<8 SPKR_R_VI 0x3>;
 			qcom,swr-num-dev = <2>;
 			wsa881x_0211: wsa881x@20170211 {
-				compatible = "qcom,wsa881x";
-				reg = <0x10 0x20170211>;
-				qcom,spkr-sd-n-node = <&wsa_spkr_en1>;
-				qcom,bolero-handle = <&bolero>;
+					compatible = "qcom,wsa881x";
+					reg = <0x10 0x20170211>;
+					qcom,spkr-sd-n-node = <&wsa_spkr_en1>;
+					qcom,bolero-handle = <&bolero>;
 			};
-
+			
 			wsa881x_0212: wsa881x@20170212 {
-				compatible = "qcom,wsa881x";
-				reg = <0x10 0x20170212>;
-				qcom,spkr-sd-n-node = <&wsa_spkr_en2>;
-				qcom,bolero-handle = <&bolero>;
+					compatible = "qcom,wsa881x";
+					reg = <0x10 0x20170212>;
+					qcom,spkr-sd-n-node = <&wsa_spkr_en2>;
+					qcom,bolero-handle = <&bolero>;
 			};
-
+			
 			wsa881x_0213: wsa881x@21170213 {
-				compatible = "qcom,wsa881x";
-				reg = <0x10 0x21170213>;
-				qcom,spkr-sd-n-node = <&wsa_spkr_en1>;
-				qcom,bolero-handle = <&bolero>;
+					compatible = "qcom,wsa881x";
+					reg = <0x10 0x21170213>;
+					qcom,spkr-sd-n-node = <&wsa_spkr_en1>;
+					qcom,bolero-handle = <&bolero>;
 			};
-
+			
 			wsa881x_0214: wsa881x@21170214 {
-				compatible = "qcom,wsa881x";
-				reg = <0x10 0x21170214>;
-				qcom,spkr-sd-n-node = <&wsa_spkr_en2>;
-				qcom,bolero-handle = <&bolero>;
+					compatible = "qcom,wsa881x";
+					reg = <0x10 0x21170214>;
+					qcom,spkr-sd-n-node = <&wsa_spkr_en2>;
+					qcom,bolero-handle = <&bolero>;
 			};
 		};
 

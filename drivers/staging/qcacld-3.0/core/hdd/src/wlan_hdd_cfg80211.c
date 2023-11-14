@@ -455,7 +455,6 @@ static const u32 hdd_sta_akm_suites[] = {
 	WLAN_AKM_SUITE_FT_FILS_SHA256,
 	WLAN_AKM_SUITE_FT_FILS_SHA384,
 	WLAN_AKM_SUITE_OWE,
-        WLAN_AKM_SUITE_DPP_RSN,
 };
 
 /*akm suits supported by AP*/
@@ -17181,6 +17180,9 @@ static int __wlan_hdd_cfg80211_add_key(struct wiphy *wiphy,
 	cipher = osif_nl_to_crypto_cipher_type(params->cipher);
 	if (pairwise)
 		wma_set_peer_ucast_cipher(mac_address.bytes, cipher);
+
+	cdp_peer_flush_frags(cds_get_context(QDF_MODULE_ID_SOC),
+			     wlan_vdev_get_id(vdev), mac_address.bytes);
 
 	switch (adapter->device_mode) {
 	case QDF_IBSS_MODE:

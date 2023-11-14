@@ -3883,7 +3883,9 @@ int wlan_hdd_update_phymode(struct hdd_adapter *adapter, int new_phymode)
 
 	hdd_debug("ch_bond24=%d ch_bond5g=%d band_24=%d band_5g=%d VHT_ch_width=%u",
 		ch_bond24, ch_bond5g, band_24, band_5g, vhtchanwidth);
-
+#ifdef FEATURE_SUPPORT_LGE
+	hdd_err("[%s]:setphymode=%d", __func__, new_phymode);
+#endif
 	switch (new_phymode) {
 	case IEEE80211_MODE_AUTO:
 		sme_set_phy_mode(mac_handle, eCSR_DOT11_MODE_AUTO);

@@ -722,7 +722,7 @@
  *
  * </ini>
  */
-
+//LGE_Patch (Cayman: set to 0 / Time: 1)
 #define CFG_SET_SAP_XLNA_BYPASS CFG_INI_BOOL( \
 		"xlna_bypass", \
 		0, \

@@ -3472,32 +3472,6 @@ static int drv_cmd_get_country(struct hdd_adapter *adapter,
 	return ret;
 }
 
-/**
- * set APF working status per WLAN chip's suspend monitor mode
-
- * @adapter: pointer to adapter on which request is received
- * Return: On success 0, negative value on error.
- */
-
-static int drv_apf_enable(struct hdd_adapter *adapter, bool apf_enable)
-{
-	QDF_STATUS status;
-
-	hdd_prevent_suspend(WIFI_POWER_EVENT_WAKELOCK_WOW);
-
-	status = sme_set_apf_enable_disable(hdd_adapter_get_mac_handle(adapter),
-					    adapter->vdev_id, apf_enable);
-	if (!QDF_IS_STATUS_SUCCESS(status)) {
-		hdd_err("Unable to post sme apf enable/disable message (status-%d)",
-				status);
-		return -EINVAL;
-	}
-	adapter->apf_context.apf_enabled = apf_enable;
-
-	hdd_allow_suspend(WIFI_POWER_EVENT_WAKELOCK_WOW);
-	return 0;
-}
-
 static int drv_cmd_set_roam_trigger(struct hdd_adapter *adapter,
 				    struct hdd_context *hdd_ctx,
 				    uint8_t *command,
@@ -3844,9 +3818,6 @@ static int drv_cmd_set_suspend_mode(struct hdd_adapter *adapter,
 				    struct hdd_priv_data *priv_data)
 {
 	int errno;
-#ifdef QCA_WIFI_QCA6390
-	int qpower;
-#endif
 	uint8_t *value = command;
 	QDF_STATUS status;
 	uint8_t idle_monitor;
@@ -3870,19 +3841,7 @@ static int drv_cmd_set_suspend_mode(struct hdd_adapter *adapter,
 		return -EINVAL;
 	}
 
-	//MIUI: ADD
-	//idle_monitor: 0-screen on/monitor off/APF disable, 1: screen off/monitor on/APF enable.
-	drv_apf_enable(adapter, idle_monitor);
-#ifdef QCA_WIFI_QCA6390
-	if(0 == idle_monitor){
-		qpower = PMO_PS_ADVANCED_POWER_SAVE_ENABLE;
-	}else{
-		qpower = PMO_PS_ADVANCED_POWER_SAVE_DISABLE;
-	}
-	hdd_set_power_config(hdd_ctx, adapter, qpower);
-	hdd_debug("qpower:%d", qpower);
-#endif
-	hdd_debug("APF status and idle_monitor:%d, ", idle_monitor);
+	hdd_debug("idle_monitor:%d", idle_monitor);
 	status = ucfg_pmo_tgt_psoc_send_idle_roam_suspend_mode(hdd_ctx->psoc,
 							       idle_monitor);
 	if (QDF_IS_STATUS_ERROR(status)) {
@@ -7182,6 +7141,72 @@ static int drv_cmd_dummy(struct hdd_adapter *adapter,
 	return 0;
 }
 
+#ifdef FEATURE_SUPPORT_LGE
+extern void wlan_hdd_set_scan_suppress(uint8_t on_off);
+extern int policy_mgr_get_dbs_mode(void);
+/*LGE_CHNAGE_S, DRIVER scan_suppress command, 2017-06-12, moon-wifi@lge.com*/
+static int drv_cmd_set_scansuppress(struct hdd_adapter *adapter,
+			 struct hdd_context *hdd_ctx,
+			 uint8_t *command,
+			 uint8_t command_len,
+			 struct hdd_priv_data *priv_data)
+{
+	int ret;
+	uint8_t on_off = 0;
+	size_t len = 0;
+	hdd_err("[LGE_COMMAND]:%s: \"%s\"", adapter->dev->name, command);
+
+	len = strlen(command);
+	if (len != 18) {
+		hdd_err("Incorrect Strvalue");
+		return -EINVAL;
+	}
+
+	ret = kstrtou8(command + 17, 10, &on_off);
+	if (ret != 0) {
+		hdd_err("Error in conversion from int to str: %d", ret);
+		return -EINVAL;
+	}
+
+	if (on_off < 0 || on_off > 1) {
+		hdd_err("Incorrect Testvalue!!(%ld)", on_off);
+		return -EINVAL;
+	}
+
+	wlan_hdd_set_scan_suppress(on_off);
+	return 0;
+}
+
+static int drv_cmd_get_dbsmode(struct hdd_adapter *adapter,
+			 struct hdd_context *hdd_ctx,
+			 uint8_t *command,
+			 uint8_t command_len,
+			 struct hdd_priv_data *priv_data)
+{
+	char extra[32] = {'\0',};
+	uint8_t len = 0;
+	int rsdb_mode = 0; // default off
+	int status;
+	status = wlan_hdd_validate_context(hdd_ctx);
+	if (status != 0) {
+		hdd_err("Fatal Error, this is not valid contxt!!, default non DBS");
+		hdd_exit();
+		return -EINVAL;
+	}
+
+	rsdb_mode = policy_mgr_get_dbs_mode();
+	len = scnprintf(extra, sizeof(extra), "%s %d", command, rsdb_mode);
+	if (copy_to_user(priv_data->buf, &extra, len)) {
+		hdd_err("Failed to copy data to user buffer");
+		hdd_exit();
+		return -EFAULT;
+	}
+    return 0;
+}
+
+/*LGE_CHNAGE_E, DRIVER scan_suppress command, 2017-06-12, moon-wifi@lge.com*/
+#endif
+
 /*
  * handler for any unsupported wlan hdd driver command
  */
@@ -7781,38 +7806,6 @@ static int drv_cmd_get_disable_chan_list(struct hdd_adapter *adapter,
 }
 #endif
 
-static int drv_cmd_set_phymode(struct hdd_adapter *adapter,
-					struct hdd_context *hdd_ctx,
-					uint8_t *command,
-					uint8_t command_len,
-					struct hdd_priv_data *priv_data)
-{
-	int ret = 0;
-	uint8_t *value = command;
-	uint8_t new_phymode = 0;
-
-	/* Move pointer to ahead of SET_PHYMODE<delimiter> */
-	value = value + command_len + 1;
-
-	/* Convert the value from ascii to integer */
-	ret = kstrtou8(value, 10, &new_phymode);
-	if (ret < 0) {
-		/*
-		 * If the input value is greater than max value of datatype,
-		 * then also kstrtou8 fails
-		 */
-		hdd_err("kstrtou8 failed Input value may be out of range");
-		ret = -EINVAL;
-		goto exit;
-	}
-
-	wlan_hdd_update_phymode(adapter, new_phymode);
-exit:
-	return ret;
-
-
-}
-
 #ifdef FEATURE_ANI_LEVEL_REQUEST
 static int drv_cmd_get_ani_level(struct hdd_adapter *adapter,
 				 struct hdd_context *hdd_ctx,
@@ -8100,12 +8093,17 @@ static const struct hdd_drv_cmd hdd_drv_cmds[] = {
 	{"GET_DISABLE_CHANNEL_LIST",  drv_cmd_get_disable_chan_list, false},
 	{"GET_ANI_LEVEL",             drv_cmd_get_ani_level, false},
 	{"STOP",                      drv_cmd_dummy, false},
-	{"SET_PHYMODE",               drv_cmd_set_phymode, true},
 	/* Deprecated commands */
 	{"RXFILTER-START",            drv_cmd_dummy, false},
 	{"RXFILTER-STOP",             drv_cmd_dummy, false},
 	{"BTCOEXSCAN-START",          drv_cmd_dummy, false},
 	{"BTCOEXSCAN-STOP",           drv_cmd_dummy, false},
+#ifdef FEATURE_SUPPORT_LGE
+/*LGE_CHNAGE_S, DRIVER scan_suppress command, 2017-06-12, moon-wifi@lge.com*/
+	{"SET_SCANSUPPRESS",          drv_cmd_set_scansuppress, true}, //true or false??
+	{"GET_RSDBMODE",              drv_cmd_get_dbsmode, false},
+/*LGE_CHNAGE_E, DRIVER scan_suppress command, 2017-06-12, moon-wifi@lge.com*/
+#endif
 };
 
 /**

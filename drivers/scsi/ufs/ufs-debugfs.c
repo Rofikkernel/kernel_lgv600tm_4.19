@@ -1549,6 +1549,9 @@ static int ufsdbg_dump_unit_desc_show(struct seq_file *file, void *data)
 	}
 	for(i=0; i<ARRAY_SIZE(unit_rpmb_desc_field_name); ++i) {
 		tmp = &unit_desc_field_name[i];
+		if (tmp->offset >= hba->desc_size.unit_desc)
+			break;
+
 		seq_printf(file,
 				"RPMB UNIT Descriptor[Byte offset 0x%x]: %s = 0x%x\n",
 				tmp->offset,

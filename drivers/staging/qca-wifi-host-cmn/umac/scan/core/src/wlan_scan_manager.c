@@ -1154,7 +1154,7 @@ scm_update_channel_list(struct scan_start_request *req,
 	    (scan_obj->scan_def.allow_dfs_chan_in_first_scan ||
 	     first_scan_done)) &&
 	     !(scan_obj->scan_def.skip_dfs_chan_in_p2p_search && p2p_search) &&
-	     !scan_obj->miracast_enabled)
+	     !scan_obj->miracast_enabled)   /*LGE PATCH, skip DFS channel when Miracast */
 		skip_dfs_ch = false;
 
 	for (i = 0; i < req->scan_req.chan_list.num_chan; i++) {

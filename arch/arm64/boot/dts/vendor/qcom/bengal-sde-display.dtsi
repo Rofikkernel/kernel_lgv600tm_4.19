@@ -5,19 +5,6 @@
 #include "dsi-panel-r66451-hd-plus-90hz-cmd.dtsi"
 #include <dt-bindings/clock/mdss-14nm-pll-clk.h>
 
-&pmi632_gpios {
-	disp_pins {
-		disp_pins_default: disp_pins_default {
-			pins = "gpio6";
-			function = "func1";
-			qcom,drive-strength = <2>;
-			power-source = <0>;
-			bias-disable;
-			output-low;
-		};
-	};
-};
-
 &soc {
 	dsi_panel_pwr_supply: dsi_panel_pwr_supply {
 		#address-cells = <1>;
@@ -36,7 +23,7 @@
 		qcom,panel-supply-entry@1 {
 			reg = <1>;
 			qcom,supply-name = "lab";
-			qcom,supply-min-voltage = <4600000>;
+			qcom,supply-min-voltage = <5600000>;
 			qcom,supply-max-voltage = <6000000>;
 			qcom,supply-enable-load = <100000>;
 			qcom,supply-disable-load = <100>;
@@ -45,7 +32,7 @@
 		qcom,panel-supply-entry@2 {
 			reg = <2>;
 			qcom,supply-name = "ibb";
-			qcom,supply-min-voltage = <4600000>;
+			qcom,supply-min-voltage = <5600000>;
 			qcom,supply-max-voltage = <6000000>;
 			qcom,supply-enable-load = <100000>;
 			qcom,supply-disable-load = <100>;

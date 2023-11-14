@@ -295,14 +295,16 @@ static ssize_t qfprom_deviceid_show(struct device *dev, struct device_attribute 
     sprintf(temp, "%02X", device_id_hash[i]);
     strncat(device_id_char, temp, 2);
   }
-  return sprintf(buf, "%s\n", device_id_char);
 
+  crypto_free_ahash(tfm);
   kfree(temp);
+  return sprintf(buf, "%s\n", device_id_char);
 
 hash_err:
   if (tfm)
     crypto_free_ahash(tfm);
 
+  kfree(temp);
   return sprintf(buf, "0\n");
 }
 static DEVICE_ATTR(device_id, S_IWUSR | S_IRUGO, qfprom_deviceid_show, NULL);

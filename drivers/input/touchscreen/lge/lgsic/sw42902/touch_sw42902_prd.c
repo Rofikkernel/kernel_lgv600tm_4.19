@@ -640,6 +640,12 @@ static int sdcard_spec_file_read(struct device *dev)
 	fd = ksys_open(path[path_idx], O_RDONLY, 0);
 	if (fd >= 0) {
 		size = ksys_lseek(fd, 0, SEEK_END);
+		if (size <= 0) {
+			TOUCH_E("ksys_lseek failed to get size\n");
+			ksys_close(fd);
+			set_fs(old_fs);
+			return -ENOMEM;
+		}
 
 		if (line) {
 			TOUCH_I("%s: line is already allocated. kfree line\n",
@@ -657,7 +663,7 @@ static int sdcard_spec_file_read(struct device *dev)
 		}
 
 		ksys_lseek(fd, 0, SEEK_SET);
-		ksys_read(fd, line, sizeof(line));
+		ksys_read(fd, line, size);
 		ksys_close(fd);
 		TOUCH_I("%s file existing\n", path[path_idx]);
 		ret = 1;
@@ -748,7 +754,6 @@ static int sic_get_simple_limit(struct device *dev, char *breakpoint, u16 (*buf)
 	switch (boot_mode) {
 	case TOUCH_NORMAL_BOOT:
 	case TOUCH_MINIOS_AAT:
-	case TOUCH_RECOVERY_MODE:
 	case TOUCH_MINIOS_MFTS_FOLDER:
 	case TOUCH_MINIOS_MFTS_FLAT:
 	case TOUCH_MINIOS_MFTS_CURVED:
@@ -756,7 +761,7 @@ static int sic_get_simple_limit(struct device *dev, char *breakpoint, u16 (*buf)
 		break;
 	case TOUCH_CHARGER_MODE:
 	case TOUCH_LAF_MODE:
-	//case TOUCH_RECOVERY_MODE:
+	case TOUCH_RECOVERY_MODE:
 		TOUCH_I("%s: Etc boot_mode(%d)!!!\n", __func__, boot_mode);
 		ret = -1;
 		goto error;
@@ -834,7 +839,6 @@ static int sic_get_limit(struct device *dev, char *breakpoint, u16 (*buf)[COL_SI
 	switch (boot_mode) {
 	case TOUCH_NORMAL_BOOT:
 	case TOUCH_MINIOS_AAT:
-	case TOUCH_RECOVERY_MODE:
 	case TOUCH_MINIOS_MFTS_FOLDER:
 	case TOUCH_MINIOS_MFTS_FLAT:
 	case TOUCH_MINIOS_MFTS_CURVED:
@@ -842,7 +846,7 @@ static int sic_get_limit(struct device *dev, char *breakpoint, u16 (*buf)[COL_SI
 		break;
 	case TOUCH_CHARGER_MODE:
 	case TOUCH_LAF_MODE:
-	//case TOUCH_RECOVERY_MODE:
+	case TOUCH_RECOVERY_MODE:
 		TOUCH_I("%s: Etc boot_mode(%d)!!!\n", __func__, boot_mode);
 		ret = -1;
 		goto error;

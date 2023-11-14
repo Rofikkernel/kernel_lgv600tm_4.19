@@ -1145,6 +1145,7 @@ void wa_clear_dc_reverse_volt_trigger(bool enable)
 	struct smb_charger* chg = wa_helper_chg();
 	struct ext_smb_charger *ext_chg;
 	u8 status;
+	int rc = 0;
 
 	if (!chg) {
 		pr_wa("'chg' is not ready\n");
@@ -1152,17 +1153,30 @@ void wa_clear_dc_reverse_volt_trigger(bool enable)
 	}
 
 	ext_chg = chg->ext_chg;
+	if (!ext_chg) {
+		pr_wa("'ext_chg' is not ready\n");
+		return;
+	}
+
 	if (!ext_chg->enable_clear_dc_reverse_volt)
 		return;
 
 	if (enable) {
-		smblib_masked_write(chg, DCIN_CMD_IL_REG, DC_IN_EN_OVERRIDE, 0);
+		rc = smblib_masked_write(chg, DCIN_CMD_IL_REG, DC_IN_EN_OVERRIDE, 0);
+		if (rc < 0) {
+			pr_wa("Couldn't write to DCIN_CMD_IL_REG rc=%d\n", rc);
+		}
 	} else {
-		smblib_read(chg, DCIN_BASE + INT_RT_STS_OFFSET, &status);
-		if (status == INT_ABNORMAL_OFFSET) {
-			pr_wa("wa_clear_dc_reverse_volt_trigger write!\n");
-			smblib_masked_write(chg, DCIN_CMD_IL_REG,
-				DC_IN_EN_OVERRIDE, DC_IN_EN_OVERRIDE);
+		rc = smblib_read(chg, DCIN_BASE + INT_RT_STS_OFFSET, &status);
+		if (!rc) {
+			if (status == INT_ABNORMAL_OFFSET) {
+				pr_wa("wa_clear_dc_reverse_volt_trigger write!\n");
+				rc = smblib_masked_write(chg, DCIN_CMD_IL_REG,
+					DC_IN_EN_OVERRIDE, DC_IN_EN_OVERRIDE);
+				if (rc < 0) {
+					pr_wa("Couldn't write to DCIN_CMD_IL_REG rc=%d\n", rc);
+				}
+			}
 		}
 	}
 }
@@ -1403,7 +1417,7 @@ void wa_retry_vconn_enable_on_vconn_oc_trigger(struct smb_charger* chg)
 
 void wa_retry_vconn_enable_on_vconn_oc_clear(struct smb_charger *chg)
 {
-	struct ext_smb_charger *ext_chg = chg->ext_chg;
+	struct ext_smb_charger *ext_chg;
 	int rc;
 
 	if (!chg || !chg->vconn_vreg->rdev) {
@@ -1411,6 +1425,7 @@ void wa_retry_vconn_enable_on_vconn_oc_clear(struct smb_charger *chg)
 		return;
 	}
 
+	ext_chg = chg->ext_chg;
 	if (!ext_chg->enable_retry_vconn_with_oc)
 		return;
 
@@ -2982,16 +2997,49 @@ static void wa_comp_pps_pwr_init(struct smb_charger *chg)
 // LGE Workaround : abnormal operation during PPS TA CP Charing
 ////////////////////////////////////////////////////////////////////////////
 #define WA_BAD_PPS_TA_DELAY            5000  /* 5sec           */
+
+#if defined(CONFIG_MACH_KONA_TIMELM_DCM_JP) || \
+	defined(CONFIG_MACH_KONA_TIMELM_SB_JP)
+#define WA_BAD_PPS_TA_MAX_COUNT        3     /* it means 30sec */
+#else
 #define WA_BAD_PPS_TA_MAX_COUNT        6     /* it means 30sec */
+#endif
+
 #define WA_CP_MIN_CURRENT_MA           2000  /* 2A             */
 #define WA_BAD_PPS_TA_MAX_VOLT_MV      9500  /* 9.5V           */
 #define WA_BAD_PPS_TA_MIN_VOLT_MV      7500  /* 7.5V           */
+
+bool is_bad_pps_detected(void){
+	struct smb_charger* chg = wa_helper_chg();
+	struct ext_smb_charger *ext_chg;
+	bool ret = false;
+	if (!chg) {
+		pr_wa("'chg' is not ready\n");
+		return ret;
+	}
+	ext_chg = chg->ext_chg;
+	if (ext_chg->bad_pps_ta_detected){
+#if defined(CONFIG_MACH_KONA_TIMELM_DCM_JP) || \
+	defined(CONFIG_MACH_KONA_TIMELM_SB_JP)
+		ret =  true;
+#endif
+		pr_info("is_bad_pps_detected flag true..\n");
+	}
+	return ret;
+}
+EXPORT_SYMBOL(is_bad_pps_detected);
+
 static void wa_bad_operation_pps_ta_trigger(struct smb_charger* chg)
 {
 	struct ext_smb_charger *ext_chg = chg->ext_chg;
 
 	if (!ext_chg->enable_bad_operation_pps_ta)
 		return;
+
+	if (chg->cp_disable_votable)
+		vote(chg->cp_disable_votable, "BAD_PPS_WA", false, 0);
+	if (chg->fcc_votable)
+		vote(chg->fcc_votable, "BAD_PPS_WA", false, 0);
 
 	if (!ext_chg->is_bad_operation_pps_ta) {
 		ext_chg->is_bad_operation_pps_ta = true;
@@ -3011,10 +3059,20 @@ static void wa_bad_operation_pps_ta_clear(struct smb_charger *chg)
 	if (!ext_chg->enable_bad_operation_pps_ta)
 		return;
 
+	if (chg->cp_disable_votable)
+		vote(chg->cp_disable_votable, "BAD_PPS_WA", false, 0);
+	if (chg->fcc_votable)
+		vote(chg->fcc_votable, "BAD_PPS_WA", false, 0);
+
 	if (ext_chg->is_bad_operation_pps_ta) {
 		ext_chg->is_bad_operation_pps_ta = false;
 		ext_chg->bad_operation_pps_ta_count = 0;
 		cancel_delayed_work(&ext_chg->wa_bad_operation_pps_ta_dwork);
+#if defined(CONFIG_MACH_KONA_TIMELM_DCM_JP) || \
+	defined(CONFIG_MACH_KONA_TIMELM_SB_JP)
+		if (chg->cp_disable_votable)
+			vote_override(chg->cp_disable_votable, "BAD_PPS_WA", false, 0);
+#endif
 		pr_info("clear bad pps ta..\n");
 	}
 }
@@ -3069,7 +3127,16 @@ static void wa_bad_operation_pps_ta_work_func(struct work_struct *work)
 			pr_info("do pd hard reset..vusb=%dmV, fcc=%dmA, fcc_main=%dmA\n",
 				vusb_mv, fcc_ma, fcc_main_ma);
 			wa_bad_operation_pps_ta_clear(chg);
+			ext_chg->bad_pps_ta_detected = true;
+#if defined(CONFIG_MACH_KONA_TIMELM_DCM_JP) || \
+	defined(CONFIG_MACH_KONA_TIMELM_SB_JP)
+			if (chg->cp_disable_votable)
+				vote_override(chg->cp_disable_votable, "BAD_PPS_WA", true, 0);
+			if (chg->fcc_votable)
+				vote_override(chg->fcc_votable, "BAD_PPS_WA", true, 3000000);
+#else
 			do_pd_hard_reset();
+#endif
 		}
 		else {
 			pr_info("one more check..count=%d, vusb=%dmV, fcc=%dmA, fcc_main=%dmA\n",
@@ -3237,6 +3304,7 @@ int wa_usbin_plugin_nb(struct notifier_block *nb, unsigned long vbus, void *v)
 		wa_probate_ibat_voter_clear(chg);
 		wa_comp_pps_pwr_clear(chg);
 		wa_bad_operation_pps_ta_clear(chg);
+		chg->ext_chg->bad_pps_ta_detected = false;
 	}
 
 	return NOTIFY_OK;
@@ -3348,6 +3416,7 @@ void wa_helper_init(struct smb_charger *chg)
 	ext_chg->wa_usbin_plugin_nb.notifier_call = wa_usbin_plugin_nb;
 	ext_chg->wa_typec_state_change_nb.notifier_call = wa_typec_state_change_nb;
 	ext_chg->wa_psy_change_nb.notifier_call = wa_psy_change_nb;
+	ext_chg->bad_pps_ta_detected = false;
 
 	raw_notifier_chain_register(
 		&ext_chg->usb_plugin_notifier,

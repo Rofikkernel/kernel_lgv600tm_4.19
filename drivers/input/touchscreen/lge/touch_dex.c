@@ -70,10 +70,6 @@ error_register:
 	input_mt_destroy_slots(ts->input_dex);
 	input_free_device(ts->input_dex);
 
-	if (ts->input_dex) {
-		input_mt_destroy_slots(ts->input_dex);
-		input_free_device(ts->input_dex);
-	}
 	return ret;
 }
 

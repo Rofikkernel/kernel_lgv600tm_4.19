@@ -1,6 +1,6 @@
 /**
    @copyright
-   Copyright (c) 2013 - 2019, Rambus Inc. All rights reserved.
+   Copyright (c) 2013 - 2020, Rambus Inc. All rights reserved.
 */
 
 #include <linux/kernel.h>
@@ -806,6 +806,7 @@ spd_proc_poll(
     return mask;
 }
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5,6,0)
 static const struct file_operations spd_proc_fops =
 {
     .open = spd_proc_open,
@@ -814,6 +815,16 @@ static const struct file_operations spd_proc_fops =
     .read = spd_proc_read,
     .poll = spd_proc_poll
 };
+#else
+static const struct proc_ops spd_proc_fops =
+{
+    .proc_open = spd_proc_open,
+    .proc_write = spd_proc_write,
+    .proc_release = spd_proc_release,
+    .proc_read = spd_proc_read,
+    .proc_poll = spd_proc_poll
+};
+#endif
 
 void spd_proc_set_ids(struct proc_dir_entry *proc_entry)
 {

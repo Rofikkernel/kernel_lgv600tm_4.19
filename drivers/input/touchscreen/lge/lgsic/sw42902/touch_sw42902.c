@@ -1296,7 +1296,7 @@ static int sw42902_get_swipe_data(struct device *dev)
 
 	ts->lpwg.code_num = 1;
 	ts->lpwg.code[0].x = rdata[1] & 0xffff;
-	ts->lpwg.code[0].x = rdata[1] >> 16;
+	ts->lpwg.code[0].y = rdata[1] >> 16;
 
 	ts->lpwg.code[1].x = -1;
 	ts->lpwg.code[1].y = -1;
@@ -2089,11 +2089,11 @@ int sw42902_tc_driving(struct device *dev, int mode)
 			ctrl = 0x04;
 			break;
 		default:
-			ctrl = -1;
+			ctrl = 0;
 			break;
 	}
 
-	if (ctrl < 0) {
+	if (ctrl == 0) {
 		TOUCH_I("invalid mode change, mode : %d", mode);
 		return -EINVAL;
 	}
@@ -2782,10 +2782,6 @@ static int sw42902_notify(struct device *dev, ulong event, void *data)
 					ctrl = 0x8303;
 				}
 				break;
-		}
-		if (ctrl < 0) {
-			TOUCH_I("invalid mode change, mode : %d", d->driving_mode);
-			ret = -EINVAL;
 		}
 		sw42902_reg_write(dev, addr,
 				&ctrl, sizeof(ctrl));
@@ -4037,7 +4033,6 @@ static int sw42902_suspend(struct device *dev)
 	switch (boot_mode) {
 	case TOUCH_NORMAL_BOOT:
 	case TOUCH_MINIOS_AAT:
-	case TOUCH_RECOVERY_MODE:
 		break;
 	case TOUCH_MINIOS_MFTS_FOLDER:
 	case TOUCH_MINIOS_MFTS_FLAT:
@@ -4052,7 +4047,7 @@ static int sw42902_suspend(struct device *dev)
 		break;
 	case TOUCH_CHARGER_MODE:
 	case TOUCH_LAF_MODE:
-	//case TOUCH_RECOVERY_MODE:
+	case TOUCH_RECOVERY_MODE:
 		TOUCH_I("%s: Etc boot_mode(%d)!!!\n", __func__, boot_mode);
 		return -EPERM;
 	default:
@@ -4110,7 +4105,6 @@ static int sw42902_resume(struct device *dev)
 	switch (boot_mode) {
 	case TOUCH_NORMAL_BOOT:
 	case TOUCH_MINIOS_AAT:
-	case TOUCH_RECOVERY_MODE:
 		break;
 	case TOUCH_MINIOS_MFTS_FOLDER:
 	case TOUCH_MINIOS_MFTS_FLAT:
@@ -4143,7 +4137,7 @@ static int sw42902_resume(struct device *dev)
 		break;
 	case TOUCH_CHARGER_MODE:
 	case TOUCH_LAF_MODE:
-	//case TOUCH_RECOVERY_MODE:
+	case TOUCH_RECOVERY_MODE:
 		TOUCH_I("%s: Etc boot_mode(%d)!!!\n", __func__, boot_mode);
 		sw42902_sleep_ctrl(dev, IC_DEEP_SLEEP);
 		return -EPERM;
@@ -4454,7 +4448,8 @@ static void sw42902_lpwg_abs_filter(struct device *dev, u8 touch_id)
 	struct touch_core_data *ts = to_touch_core(dev);
 	struct sw42902_data *d = to_sw49202_data(dev);
 	u16 old_y = ts->tdata[touch_id].y;
-	u16 new_y = old_y - d->lpwg_abs.offset_y;
+	int temp_y = old_y - d->lpwg_abs.offset_y;
+	u16 new_y = 0;
 	u16 old_mask = ts->old_mask;
 	u16 new_mask = ts->new_mask;
 	u16 change_mask = old_mask ^ new_mask;
@@ -4465,9 +4460,11 @@ static void sw42902_lpwg_abs_filter(struct device *dev, u8 touch_id)
 
 	TOUCH_TRACE();
 
-	if ((new_y > ts->caps.max_y) || (new_y < 0)) {
-		TOUCH_D(ABS, "%s: invalid new_y(%d)\n", __func__, new_y);
+	if ((temp_y > ts->caps.max_y) || (temp_y < 0)) {
+		TOUCH_D(ABS, "%s: invalid temp_y(%d)\n", __func__, temp_y);
 		new_y = 0;
+	} else {
+		new_y = old_y - d->lpwg_abs.offset_y;
 	}
 
 	if (press_mask & (1 << touch_id)) {

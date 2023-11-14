@@ -62,6 +62,14 @@ struct dm_verity_prefetch_work {
 struct buffer_aux {
 	int hash_verified;
 };
+/*
+ * While system shutdown, skip verity work for I/O error.
+ */
+static inline bool verity_is_system_shutting_down(void)
+{
+	return system_state == SYSTEM_HALT || system_state == SYSTEM_POWER_OFF
+		|| system_state == SYSTEM_RESTART;
+}
 
 /*
  * Initialize struct buffer_aux for a freshly created buffer.
@@ -636,11 +644,11 @@ static int verity_verify_io(struct dm_verity_io *io)
 #ifdef DM_VERITY_MEMORY_DUMP
 	struct bvec_iter prev_iter;
 	unsigned todo;
-	struct bio *bio;
 #endif // DM_VERITY_MEMORY_DUMP
 
 	unsigned b;
 	struct crypto_wait wait;
+	struct bio *bio = dm_bio_from_per_bio_data(io, v->ti->per_io_data_size);
 
 	for (b = 0; b < io->n_blocks; b++) {
 		int r;
@@ -715,7 +723,6 @@ static int verity_verify_io(struct dm_verity_io *io)
 							verity_io_want_digest(v, io), v->digest_size);
 
 			todo = 1 << v->data_dev_block_bits;
-			bio = dm_bio_from_per_bio_data(io, v->ti->per_io_data_size);
 			do {
 				u8 *page;
 				unsigned len;
@@ -734,6 +741,12 @@ static int verity_verify_io(struct dm_verity_io *io)
 				todo -= len;
 			} while (todo);
 #endif // DM_VERITY_MEMORY_DUMP
+			if (bio->bi_status) {
+				/*
+				 * Error correction failed; Just return error
+				 */
+				return -EIO;
+			}
 			if (verity_handle_err(v, DM_VERITY_BLOCK_TYPE_DATA,
 					   cur_block))
 				return -EIO;
@@ -766,17 +779,12 @@ static void verity_work(struct work_struct *w)
 	verity_finish_io(io, errno_to_blk_status(verity_verify_io(io)));
 }
 
-static bool verity_shutting_down(void)
-{
-	return system_state > SYSTEM_RUNNING;
-}
-
 static void verity_end_io(struct bio *bio)
 {
 	struct dm_verity_io *io = bio->bi_private;
 
-	if (bio->bi_status && (!verity_fec_is_enabled(io->v) ||
-	verity_shutting_down())) {
+	if (bio->bi_status &&
+		(!verity_fec_is_enabled(io->v) || verity_is_system_shutting_down())) {
 		verity_finish_io(io, bio->bi_status);
 		return;
 	}

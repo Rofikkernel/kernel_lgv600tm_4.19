@@ -657,11 +657,17 @@
  *
  * </ini>
  */
+#ifdef FEATURE_SUPPORT_LGE
+#define CFG_SAP_11AC_OVERRIDE CFG_INI_BOOL( \
+				"gSAP11ACOverride", \
+				1, \
+				"Override bw to 11ac for SAP")
+#else
 #define CFG_SAP_11AC_OVERRIDE CFG_INI_BOOL( \
 				"gSAP11ACOverride", \
 				0, \
 				"Override bw to 11ac for SAP")
-
+#endif
 /*
  * <ini>
  * gGO11ACOverride - Override bw to 11ac for P2P GO

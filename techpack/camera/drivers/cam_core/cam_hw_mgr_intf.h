@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
 /*
- * Copyright (c) 2017-2020, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2017-2021, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
 #ifndef _CAM_HW_MGR_INTF_H_
@@ -70,11 +71,13 @@ struct cam_hw_update_entry {
  *
  * @resrouce_handle:       Resource port id for the buffer
  * @sync_id:               Sync id
+ * @image_buf_addr:        Image buffer address array
  *
  */
 struct cam_hw_fence_map_entry {
 	uint32_t           resource_handle;
 	int32_t            sync_id;
+	int32_t            image_buf_addr[CAM_PACKET_MAX_PLANES];
 };
 
 /**
@@ -104,6 +107,7 @@ struct cam_hw_done_event_data {
  * @ctxt_to_hw_map:        HW context (returned)
  * @custom_enabled:        ctx has custom enabled
  * @use_frame_header_ts:   Use frame header for qtimer ts
+ * @support_consumed_addr: The platform has last consumed addr register
  * @acquired_hw_id:        Acquired hardware mask
  * @acquired_hw_path:      Acquired path mask for an input
  *                         if input splits into multiple paths,
@@ -121,6 +125,7 @@ struct cam_hw_acquire_args {
 	void                        *ctxt_to_hw_map;
 	bool                         custom_enabled;
 	bool                         use_frame_header_ts;
+	bool                         support_consumed_addr;
 
 	uint32_t    acquired_hw_id[CAM_MAX_ACQ_RES];
 	uint32_t    acquired_hw_path[CAM_MAX_ACQ_RES][CAM_MAX_HW_SPLIT];
@@ -233,14 +238,16 @@ struct cam_hw_stream_setttings {
 /**
  * struct cam_hw_config_args - Payload for config command
  *
- * @ctxt_to_hw_map:        HW context from the acquire
- * @num_hw_update_entries: Number of hardware update entries
- * @hw_update_entries:     Hardware update list
- * @out_map_entries:       Out map info
- * @num_out_map_entries:   Number of out map entries
- * @priv:                  Private pointer
- * @request_id:            Request ID
- * @reapply                True if reapplying after bubble
+ * @ctxt_to_hw_map:            HW context from the acquire
+ * @num_hw_update_entries:     Number of hardware update entries
+ * @hw_update_entries:         Hardware update list
+ * @out_map_entries:           Out map info
+ * @num_out_map_entries:       Number of out map entries
+ * @priv:                      Private pointer
+ * @request_id:                Request ID
+ * @reapply:                   True if reapplying after bubble
+ * @cdm_reset_before_apply:    True is need to reset CDM before re-apply bubble
+ *                             request
  *
  */
 struct cam_hw_config_args {
@@ -253,6 +260,7 @@ struct cam_hw_config_args {
 	uint64_t                        request_id;
 	bool                            init_packet;
 	bool                            reapply;
+	bool                            cdm_reset_before_apply;
 };
 
 /**

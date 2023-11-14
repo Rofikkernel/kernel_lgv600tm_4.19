@@ -944,6 +944,7 @@ static int pl_fcc_main_vote_callback(struct votable *votable, void *data,
 
 #ifdef CONFIG_LGE_PM
 extern bool unified_bootmode_usermode(void);
+extern bool is_bad_pps_detected(void);
 #endif
 static int pl_fcc_vote_callback(struct votable *votable, void *data,
 			int total_fcc_ua, const char *client)
@@ -1009,10 +1010,17 @@ static int pl_fcc_vote_callback(struct votable *votable, void *data,
 				vote_override(chip->fcc_main_votable, "CC_MODE_VOTER", false, 0);
 			}
 			else if (total_fcc_ua >= min_cp_lim_ua) {
-				vote(chip->cp_disable_votable, FCC_VOTER,
-						false, 0);
-				cp_configure_ilim(chip, FCC_VOTER,
-					(total_fcc_ua - min_fcc_main_ua) / 2);
+				if (is_bad_pps_detected()){
+					pr_err("is_bad_operation_pps_ta true. not config cp.");
+					vote_override(chip->usb_icl_votable, "CC_MODE_VOTER", false, 0);
+					vote_override(chip->fcc_main_votable, "CC_MODE_VOTER", false, 0);
+					vote(chip->fcc_main_votable, "BAD_PPS_TA", true, total_fcc_ua);
+				}else{
+					vote(chip->cp_disable_votable, FCC_VOTER,
+							false, 0);
+					cp_configure_ilim(chip, FCC_VOTER,
+						(total_fcc_ua - min_fcc_main_ua) / 2);
+				}
 			}
 		}
 	}

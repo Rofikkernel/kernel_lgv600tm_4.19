@@ -7,20 +7,20 @@
 	ramoops_region@b0000000 {
 		compatible = "removed-dma-pool";
 		no-map;
-		reg = <0x0 0xb0000000 0x0 0x100000>;
+		reg = <0x0 0xb0000000 0x0 0x300000>;
 	};
 };
 
 &soc {
 	ramoops {
 		compatible = "ramoops";
-		reg = <0xb0000000 0x80000>;
-		mem-size = <0x80000>;
+		reg = <0xb0000000 0x280000>;
+		mem-size = <0x280000>;
 		mem-address = <0xb0000000>;
 		record-size = <4096>;
 		console-size = <0x40000>;
 		ftrace-size = <0x40000>;
-		pmsg-size = <0>;
+		pmsg-size = <0x200000>;
 		ecc-size = <0>;
 	};
 

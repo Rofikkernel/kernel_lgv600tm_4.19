@@ -548,7 +548,7 @@ static void msm_restart_prepare(const char *cmd)
 
 #ifdef CONFIG_MACH_LGE
 	/* set warm reset only when panic in progress */
-	if (in_panic)
+	if (in_panic && restart_mode != RESTART_DLOAD)
 		need_warm_reset = true;
 #else
 	if (qpnp_pon_check_hard_reset_stored()) {
@@ -738,7 +738,7 @@ static void msm_restart_prepare(const char *cmd)
 #endif
 	}
 
-	if (in_panic)
+	if (in_panic && restart_mode != RESTART_DLOAD)
 		lge_set_panic_reason();
 #endif
 	flush_cache_all();
@@ -790,7 +790,8 @@ static void do_msm_restart(enum reboot_mode reboot_mode, const char *cmd)
 	 * Trigger a watchdog bite here and if this fails,
 	 * device will take the usual restart path.
 	 */
-	if (WDOG_BITE_ON_PANIC && in_panic)
+
+	if (WDOG_BITE_ON_PANIC && in_panic && restart_mode != RESTART_DLOAD)
 		msm_trigger_wdog_bite();
 
 	scm_disable_sdi();
@@ -926,6 +927,15 @@ static void do_msm_restart_timeout(enum reboot_mode reboot_mode, const char *cmd
 	else {
 	   pr_info("duplicated %s, ignored\n", __func__);
 	}
+
+#ifdef CONFIG_LGE_HANDLE_PANIC
+	if (lge_get_download_mode() == true) {
+		if (lge_get_force_reboot_crash() || lge_get_retrycount()) {
+			pr_err("%s: force crash retrycount: %d\n", __func__, lge_get_retrycount());
+			BUG();
+		}
+	}
+#endif
 }
 #endif
 

@@ -796,6 +796,8 @@ char *uevent_str[TOUCH_UEVENT_SIZE][2] = {
 
 void touch_send_uevent(struct touch_core_data *ts, int type)
 {
+	int ret = 0;
+
 	TOUCH_TRACE();
 
 	if (type == TOUCH_UEVENT_DS_UPDATE_STATE) {
@@ -814,7 +816,11 @@ void touch_send_uevent(struct touch_core_data *ts, int type)
 		if (atomic_read(&ts->state.uevent) != UEVENT_IDLE &&
 				touch_check_boot_mode(ts->dev) == TOUCH_NORMAL_BOOT) {
 			TOUCH_I("%s is waiting", uevent_str[type][0]);
-			wait_for_completion_timeout(&ts->uevent_complete, msecs_to_jiffies(UEVENT_TIMEOUT));
+			ret = wait_for_completion_timeout(&ts->uevent_complete, msecs_to_jiffies(UEVENT_TIMEOUT));
+			if (ret == 0) {
+				TOUCH_E("UEVENT Timedout");
+				return;
+			}
 		}
 
 		if (atomic_read(&ts->state.uevent) == UEVENT_IDLE ||
@@ -900,7 +906,7 @@ static int touch_notify(struct touch_core_data *ts,
 	boot_mode = touch_check_boot_mode(ts->dev);
 	if (boot_mode == TOUCH_CHARGER_MODE
 			|| boot_mode == TOUCH_LAF_MODE
-			) {
+			|| boot_mode == TOUCH_RECOVERY_MODE) {
 		TOUCH_I("%s: boot_mode = %d\n", __func__, boot_mode);
 		return 0;
 	}
@@ -962,7 +968,7 @@ static int display_notify(struct touch_core_data *ts,
 	boot_mode = touch_check_boot_mode(ts->dev);
 	if (boot_mode == TOUCH_CHARGER_MODE
 			|| boot_mode == TOUCH_LAF_MODE
-			) {
+			|| boot_mode == TOUCH_RECOVERY_MODE) {
 		TOUCH_I("%s: boot_mode = %d\n", __func__, boot_mode);
 		return 0;
 	}
@@ -1427,7 +1433,7 @@ static int touch_core_probe(struct platform_device *pdev)
 	boot_mode = touch_check_boot_mode(ts->dev);
 	if (boot_mode == TOUCH_CHARGER_MODE
 			|| boot_mode == TOUCH_LAF_MODE
-			) {
+			|| boot_mode == TOUCH_RECOVERY_MODE) {
 		TOUCH_I("%s: boot_mode = %d\n", __func__, boot_mode);
 		ret = touch_core_probe_etc(pdev);
 		goto out;

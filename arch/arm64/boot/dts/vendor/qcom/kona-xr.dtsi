@@ -678,7 +678,12 @@
 	};
 
 	qcom,xr-stdalonevwr-misc {
+		status ="ok";
 		compatible = "qcom,xr-stdalonevwr-misc";
+		/* IMU CLK Enable PM8150 GPIO 3 */
+		pinctrl-names = "default", "sleep";
+		pinctrl-0 = <&imu_clkin_default>;
+		pinctrl-1 = <&imu_clkin_sleep>;
 	};
 };
 
@@ -710,6 +715,7 @@
 		pinctrl-names = "default";
 		pinctrl-0 = <&bt_en_sleep>;
 		qca,bt-reset-gpio = <&tlmm 21 0>; /* BT_EN */
+		qca,bt-sw-ctrl-gpio = <&tlmm 124 0>; /* SW_CTRL */
 		qca,bt-vdd-aon-supply = <&pm8150_s6>;
 		qca,bt-vdd-dig-supply = <&pm8009_s2>;
 		qca,bt-vdd-rfa1-supply = <&pm8150_s5>;
@@ -1036,6 +1042,10 @@
 	};
 };
 
+&mdss_mdp {
+	connectors = <&sde_dp &sde_dsi &sde_dsi1 &sde_rscc>;
+};
+
 &pm8150l_lcdb {
 	status = "ok";
 };
@@ -1050,6 +1060,7 @@
 		polling-delay = <0>;
 		thermal-governor = "user_space";
 		thermal-sensors = <&pm8150b_adc_tm ADC_AMUX_THM3_PU2>;
+		wake-capable-sensor;
 		trips {
 			active-config0 {
 				temperature = <125000>;
@@ -1064,6 +1075,7 @@
 		polling-delay = <0>;
 		thermal-governor = "user_space";
 		thermal-sensors = <&pm8150_adc_tm ADC_XO_THERM_PU2>;
+		wake-capable-sensor;
 		trips {
 			active-config0 {
 				temperature = <125000>;
@@ -1078,6 +1090,7 @@
 		polling-delay = <0>;
 		thermal-governor = "user_space";
 		thermal-sensors = <&pm8150_adc_tm ADC_AMUX_THM1_PU2>;
+		wake-capable-sensor;
 		trips {
 			active-config0 {
 				temperature = <125000>;
@@ -1092,6 +1105,7 @@
 		polling-delay = <0>;
 		thermal-governor = "user_space";
 		thermal-sensors = <&pm8150_adc_tm ADC_AMUX_THM2_PU2>;
+		wake-capable-sensor;
 		trips {
 			active-config0 {
 				temperature = <125000>;
@@ -1106,6 +1120,7 @@
 		polling-delay = <0>;
 		thermal-governor = "user_space";
 		thermal-sensors = <&pm8150l_adc_tm ADC_AMUX_THM1_PU2>;
+		wake-capable-sensor;
 		trips {
 			active-config0 {
 				temperature = <125000>;
@@ -1120,8 +1135,15 @@
 		polling-delay = <0>;
 		thermal-governor = "user_space";
 		thermal-sensors = <&pm8150l_adc_tm ADC_AMUX_THM2_PU2>;
+		wake-capable-sensor;
 		trips {
 			active-config0 {
+				temperature = <125000>;
+				hysteresis = <1000>;
+				type = "passive";
+			};
+
+			active-config1 {
 				temperature = <125000>;
 				hysteresis = <1000>;
 				type = "passive";
@@ -1134,6 +1156,7 @@
 		polling-delay = <0>;
 		thermal-governor = "user_space";
 		thermal-sensors = <&pm8150l_adc_tm ADC_AMUX_THM3_PU2>;
+		wake-capable-sensor;
 		trips {
 			active-config0 {
 				temperature = <125000>;

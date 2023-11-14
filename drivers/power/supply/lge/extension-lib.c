@@ -341,8 +341,12 @@ irqreturn_t override_dc_plugin_irq_handler(int irq, void *data)
 
 	if (chg->cp_psy) {
 		pval.intval = dcin_present ? POWER_SUPPLY_PL_USBMID_USBMID : POWER_SUPPLY_PL_USBIN_USBIN;
-		power_supply_set_property(chg->cp_psy, POWER_SUPPLY_PROP_PARALLEL_MODE, &pval);
-		power_supply_get_property(chg->cp_psy, POWER_SUPPLY_PROP_PARALLEL_MODE, &pval);
+		if (power_supply_set_property(chg->cp_psy, POWER_SUPPLY_PROP_PARALLEL_MODE, &pval)) {
+			smblib_err(chg, "Error to set POWER_SUPPLY_PROP_PARALLEL_MODE : %d\n", pval.intval);
+		}
+		if (power_supply_get_property(chg->cp_psy, POWER_SUPPLY_PROP_PARALLEL_MODE, &pval)) {
+			smblib_err(chg, "Error to get POWER_SUPPLY_PROP_PARALLEL_MODE : %d\n", pval.intval);
+		}
 	}
 
 	if (!dcin_present) {
@@ -456,6 +460,7 @@ static int psy_change_call(struct notifier_block *nb,
 void extension_smb5_determine_initial_status(struct smb_charger *chg, void *data)
 {
 	struct ext_smb_charger *ext_chg;
+	int rc = 0;
 
 	ext_chg = devm_kzalloc(chg->dev, sizeof(*ext_chg), GFP_KERNEL);
 	if (!ext_chg) {
@@ -470,7 +475,9 @@ void extension_smb5_determine_initial_status(struct smb_charger *chg, void *data
 	INIT_WORK(&ext_chg->typec_state_change_work, typec_state_change_work);
 	INIT_WORK(&ext_chg->psy_change_work, psy_change_work);
 	ext_chg->psy_change_nb.notifier_call = psy_change_call;
-	power_supply_reg_notifier(&ext_chg->psy_change_nb);
+	rc = power_supply_reg_notifier(&ext_chg->psy_change_nb);
+	if (rc < 0)
+		pr_err("Failed register psy notifier rc = %d\n", rc);
 
 	RAW_INIT_NOTIFIER_HEAD(&ext_chg->usb_plugin_notifier);
 	RAW_INIT_NOTIFIER_HEAD(&ext_chg->usb_source_change_notifier);

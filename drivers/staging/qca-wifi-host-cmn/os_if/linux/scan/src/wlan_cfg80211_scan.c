@@ -658,7 +658,7 @@ wlan_copy_bssid_scan_request(struct scan_start_request *scan_req,
  * Schedule scan start request and enqueue scan request in the global scan
  * list. This list stores the active scan request information.
  *
- * Return: QDF_STATUS 
+ * Return: QDF_STATUS
  */
 static QDF_STATUS
 wlan_schedule_scan_start_request(struct wlan_objmgr_pdev *pdev,
@@ -674,7 +674,7 @@ wlan_schedule_scan_start_request(struct wlan_objmgr_pdev *pdev,
 	scan_req = qdf_mem_malloc(sizeof(*scan_req));
 	if (!scan_req) {
 		ucfg_scm_scan_free_scan_request_mem(scan_start_req);
-                return QDF_STATUS_E_NOMEM;
+		return QDF_STATUS_E_NOMEM;
 	}
 
 	/* Get NL global context from objmgr*/
@@ -708,7 +708,7 @@ wlan_schedule_scan_start_request(struct wlan_objmgr_pdev *pdev,
 		qdf_mem_free(scan_req);
 	}
 
-        return status;
+	return status;
 }
 
 /**
@@ -744,11 +744,11 @@ static QDF_STATUS wlan_scan_request_dequeue(
 		return status;
 	}
 	scan_priv = osif_ctx->osif_scan;
-        qdf_mutex_acquire(&scan_priv->scan_req_q_lock);
 
+	qdf_mutex_acquire(&scan_priv->scan_req_q_lock);
 	if (qdf_list_empty(&scan_priv->scan_req_q)) {
 		osif_info("Scan List is empty");
-                qdf_mutex_release(&scan_priv->scan_req_q_lock);
+		qdf_mutex_release(&scan_priv->scan_req_q_lock);
 		return QDF_STATUS_E_FAILURE;
 	}
 
@@ -1036,11 +1036,11 @@ static void wlan_cfg80211_scan_done_callback(
 	wlan_objmgr_vdev_release_ref(vdev, WLAN_OSIF_ID);
 allow_suspend:
 	osif_priv = wlan_pdev_get_ospriv(pdev);
-        qdf_mutex_acquire(&osif_priv->osif_scan->scan_req_q_lock);
+	qdf_mutex_acquire(&osif_priv->osif_scan->scan_req_q_lock);
 	if (qdf_list_empty(&osif_priv->osif_scan->scan_req_q)) {
 		struct wlan_objmgr_psoc *psoc;
 
-                qdf_mutex_release(&osif_priv->osif_scan->scan_req_q_lock);
+		qdf_mutex_release(&osif_priv->osif_scan->scan_req_q_lock);
 		qdf_runtime_pm_allow_suspend(
 			&osif_priv->osif_scan->runtime_pm_lock);
 
@@ -1058,8 +1058,8 @@ allow_suspend:
 					&osif_priv->osif_scan->scan_wake_lock,
 					SCAN_WAKE_LOCK_CONNECT_DURATION);
 	} else {
-	  qdf_mutex_release(&osif_priv->osif_scan->scan_req_q_lock);
- 	}
+		qdf_mutex_release(&osif_priv->osif_scan->scan_req_q_lock);
+	}
 }
 
 QDF_STATUS wlan_scan_runtime_pm_init(struct wlan_objmgr_pdev *pdev)
@@ -1343,7 +1343,8 @@ int wlan_cfg80211_scan(struct wlan_objmgr_vdev *vdev,
 		osif_err("Simultaneous scan disabled, reject scan");
 		return -EBUSY;
 	}
-        qdf_mutex_release(&osif_priv->osif_scan->scan_req_q_lock);
+	qdf_mutex_release(&osif_priv->osif_scan->scan_req_q_lock);
+
 	req = qdf_mem_malloc(sizeof(*req));
 	if (!req)
 		return -EINVAL;
@@ -1575,7 +1576,7 @@ int wlan_cfg80211_scan(struct wlan_objmgr_vdev *vdev,
 	qdf_status = wlan_schedule_scan_start_request(pdev, request,
 						      params->source, req);
 	if (QDF_IS_STATUS_ERROR(qdf_status)) {
-                qdf_mutex_acquire(&osif_priv->osif_scan->scan_req_q_lock);
+		qdf_mutex_acquire(&osif_priv->osif_scan->scan_req_q_lock);
 		if (qdf_list_empty(&osif_priv->osif_scan->scan_req_q)) {
 			qdf_mutex_release(
 				&osif_priv->osif_scan->scan_req_q_lock);
@@ -1587,7 +1588,7 @@ int wlan_cfg80211_scan(struct wlan_objmgr_vdev *vdev,
 		} else {
 			qdf_mutex_release(
 				&osif_priv->osif_scan->scan_req_q_lock);
- 		}
+		}
 	}
 
 	return qdf_status_to_os_return(qdf_status);
